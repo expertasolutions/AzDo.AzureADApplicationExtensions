@@ -2,7 +2,7 @@
   "name": "ManageAzureAdApplication",
   "version": "1.0.0",
   "description": "Task to create/update Azure AD Application",
-  "main": "sample.js",
+  "main": "azureAdApplication.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

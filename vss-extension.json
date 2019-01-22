@@ -21,11 +21,20 @@
     "linux",
     "windows"
   ],
+  "links":{
+    "support": { 
+        "uri": "https://github.com/expertasolutions/AzureADApplicationExtensions/issues"
+    }
+  },
+  "repository": {
+    "type" : "git",
+    "uri" : "https://github.com/expertasolutions/AzureADApplicationExtensions"
+  },
   "categories": [
       "Azure Pipelines"
   ],
   "icons": {
-      "default": "icon.png"        
+      "default": "icon.png"
   },
   "content": {
     "details": {
@@ -35,6 +44,9 @@
       "path": "license"
     }
   },
+  "galleryFlags":[
+    "Preview"
+  ],
   "files": [
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" }
