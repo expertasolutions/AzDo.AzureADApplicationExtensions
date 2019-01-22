@@ -1,0 +1,16 @@
+{
+  "name": "ManageAzureAdApplication",
+  "version": "1.0.0",
+  "description": "Task to create/update Azure AD Application",
+  "main": "azureAdApplication.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Solutions Experta Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "node-powershell": "^3.3.1",
+    "node-powershellcore": "^1.0.0",
+    "vsts-task-lib": "^2.7.0"
+  }
+}

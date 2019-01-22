@@ -1,0 +1,15 @@
+{
+  "name": "GetAzureAdApplicationId",
+  "version": "1.0.0",
+  "description": "Task to get an Azure AD Application Id",
+  "main": "azureAdApplication.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Solutions Experta Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "node-powershell": "^3.3.1",
+    "vsts-task-lib": "^2.7.0"
+  }
+}
