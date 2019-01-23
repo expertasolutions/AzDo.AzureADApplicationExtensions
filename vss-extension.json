@@ -37,16 +37,10 @@
       "default": "icon.png"
   },
   "content": {
-    "details": {
-      "path": "README.md"
-    },
-    "license": {
-      "path": "license"
-    }
+    "details": { "path": "README.md" },
+    "license": { "path": "license" }
   },
-  "galleryFlags":[
-    "Preview"
-  ],
+  "preview":true,
   "files": [
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" }

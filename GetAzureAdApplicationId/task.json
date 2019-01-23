@@ -5,6 +5,7 @@
     "description": "Task to get an Azure AD Application Id",
     "helpMarkDown": "",
     "category": "Utility",
+    "preview": true,
     "visibility": [
         "Release"
     ],
