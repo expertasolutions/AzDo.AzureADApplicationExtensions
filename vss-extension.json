@@ -1,0 +1,71 @@
+{
+  "manifestVersion": 1,
+  "id": "AzureAdApplication",
+  "name": "Azure AD Application tasks management",
+  "version": "__major__.__minor__.__patch__",
+  "publisher": "experta",
+  "targets": [
+      {
+          "id": "Microsoft.VisualStudio.Services"
+      }
+  ],    
+  "description": "Tasks package for Azure AD Applications",
+  "tags": [
+    "Azure AD Application",
+    "Build",
+    "Release",
+    "Azure Pipelines",
+    "Azure Ad",
+    "Application",
+    "macOS",
+    "linux",
+    "windows"
+  ],
+  "links":{
+    "support": { 
+        "uri": "https://github.com/expertasolutions/AzureADApplicationExtensions/issues"
+    }
+  },
+  "repository": {
+    "type" : "git",
+    "uri" : "https://github.com/expertasolutions/AzureADApplicationExtensions"
+  },
+  "categories": [
+      "Azure Pipelines"
+  ],
+  "icons": {
+      "default": "icon.png"
+  },
+  "content": {
+    "details": { "path": "README.md" },
+    "license": { "path": "license" }
+  },
+  "preview":true,
+  "files": [
+      { "path": "ManageAzureAdApplication" },
+      { "path": "GetAzureAdApplicationId" }
+  ],
+  "public": true,
+  "contributions": [
+      {
+          "id": "custom-build-release-task",
+          "type": "ms.vss-distributed-task.task",
+          "targets": [
+              "ms.vss-distributed-task.tasks"
+          ],
+          "properties": {
+              "name": "ManageAzureAdApplication"
+          }
+      },
+      {
+        "id": "custom-build-release-task-2",
+        "type": "ms.vss-distributed-task.task",
+        "targets": [
+          "ms.vss-distributed-task.tasks"
+        ],
+        "properties": {
+          "name": "GetAzureAdApplicationId"
+        }
+      }
+  ]
+}
