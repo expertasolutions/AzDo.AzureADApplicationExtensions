@@ -24,10 +24,6 @@ This task package is compatible with:
 		<td>Status</td>
 	</tr>
 	<tr>
-		<td>Preview</td>
-		<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=Preview"/></td>
-	</tr>
-	<tr>
 		<td>Master</td>
 		<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=master"/></td>
 	</tr>
@@ -42,10 +38,6 @@ This task package is compatible with:
 	<tr>
 		<td>Acceptation</td>
 		<td><img src="https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/46"/></td>
-	</tr>
-	<tr>
-		<td>Preview</td>
-		<td><img src="https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/47"/></td>
 	</tr>
 	<tr>
 		<td>VS-Marketplace</td>
