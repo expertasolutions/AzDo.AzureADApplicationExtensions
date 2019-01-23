@@ -19,14 +19,18 @@ This task package is compatible with:
 
 ## Builds status
 <table>
-	<tr>
-		<td>Branch</td>
-		<td>Status</td>
-	</tr>
-	<tr>
-		<td>Master</td>
-		<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=master"/></td>
-	</tr>
+	<thead>
+		<tr>
+			<th>Branch</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Master</td>
+			<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=master"/></td>
+		</tr>
+	</tbody>
 </table>
 
 ## Release status
