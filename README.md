@@ -25,7 +25,7 @@ This task package is compatible with:
 	</tr>
 	<tr>
 		<td>Preview</td>
-		<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=preview"/></td>
+		<td><img src="https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=Preview"/></td>
 	</tr>
 	<tr>
 		<td>Master</td>
