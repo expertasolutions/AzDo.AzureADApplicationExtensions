@@ -5,7 +5,6 @@
     "description": "Task to create/update Azure AD Application",
     "helpMarkDown": "",
     "category": "Utility",
-    "preview": true,
     "visibility": [
         "Release"
     ],

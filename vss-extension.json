@@ -40,7 +40,6 @@
     "details": { "path": "README.md" },
     "license": { "path": "license" }
   },
-  "preview":true,
   "files": [
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" }
