@@ -9,6 +9,7 @@
     "visibility": [
         "Release"
     ],
+    "author": "Solutions Experta Inc.",
     "version": {
         "Major": "__major__",
         "Minor": "__minor__",
