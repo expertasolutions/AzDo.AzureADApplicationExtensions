@@ -35,11 +35,13 @@ try {
         noProfile: true
     });
     
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "' -applicationName '" + applicationName + "'"
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'");
-    
-    pwsh.invoke()
-        .then(function(output) {
+    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'" 
+        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
+        + " -applicationName '" + applicationName + "'")
+        .then(function(){
+            return pwsh.invoke();
+        })
+        .then(function(output){
             console.log(output);
             
             var regx = "(Azure ApplicationID): ([A-Za-z0-9\\-]*)";
@@ -58,7 +60,6 @@ try {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
             pwsh.dispose();
         });
-    
 } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
