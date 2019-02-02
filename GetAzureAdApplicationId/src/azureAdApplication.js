@@ -35,9 +35,9 @@ try {
         noProfile: true
     });
     
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'" 
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
-        + " -applicationName '" + applicationName + "'")
+    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'")
+        //+ " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
+        //+ " -applicationName '" + applicationName + "'")
         .then(function(){
             return pwsh.invoke();
         })

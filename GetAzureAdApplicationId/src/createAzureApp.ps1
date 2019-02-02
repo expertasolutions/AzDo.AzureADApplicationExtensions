@@ -1,17 +1,18 @@
 param(
     [Parameter(Mandatory=$true, Position=1)]
     [string]$subscriptionId
-  , [Parameter(Mandatory=$true, Position=2)]
-    [string]$servicePrincipalId
-  , [Parameter(Mandatory=$true, Position=3)]
-    [string]$servicePrincipalKey
-  , [Parameter(Mandatory=$true, Position=4)]
-    [string]$tenantId
-  , [Parameter(Mandatory=$true, Position=5)]
-    [string]$applicationName
+#  , [Parameter(Mandatory=$true, Position=2)]
+#    [string]$servicePrincipalId
+#  , [Parameter(Mandatory=$true, Position=3)]
+#    [string]$servicePrincipalKey
+#  , [Parameter(Mandatory=$true, Position=4)]
+#    [string]$tenantId
+#  , [Parameter(Mandatory=$true, Position=5)]
+#    [string]$applicationName
 )
+
 write-host "inside the task"
-az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+#az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setResult = az account set --subscription $subscriptionId
 
 try {
