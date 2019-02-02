@@ -7,6 +7,8 @@ param(
     [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=4)]
     [string]$servicePrincipalKey
+  , [Parameter(Mandatory=$true, Position=5)]
+    [string]$tenantId
 )
 
 try {
