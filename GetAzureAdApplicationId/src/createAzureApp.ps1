@@ -17,8 +17,8 @@ write-host $servicePrincipalKey
 write-host $tenantId
 write-host $applicationName
 
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-az account set --subscription $subscriptionId
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+#az account set --subscription $subscriptionId
 
 try {
     $test = az --version
