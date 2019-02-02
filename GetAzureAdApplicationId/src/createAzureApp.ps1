@@ -13,7 +13,7 @@ param(
 
 write-host "inside the task"
 #az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setResult = az account set --subscription $subscriptionId
+az account set --subscription $subscriptionId
 
 try {
     $test = az --version
@@ -49,4 +49,4 @@ if($applicationInfo.Length -eq 0) {
 write-host "Azure ApplicationID: $($applicationInfo.appId)"
 write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-$logoutResult = az account clear
+az account clear
