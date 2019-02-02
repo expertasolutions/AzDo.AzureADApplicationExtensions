@@ -18,15 +18,15 @@ write-host $tenantId
 write-host $applicationName
 
 az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-#az account set --subscription $subscriptionId
+az account set --subscription $subscriptionId
 
-try {
-    $test = az --version
-    write-host $test
-} catch {
-    write-host "Azure Cli not installed"
-    throw;
-}
+#try {
+#    $test = az --version
+#    write-host $test
+#} catch {
+#    write-host "Azure Cli not installed"
+#    throw;
+#}
 
 #$versionResult = az --version
 #write-host $versionResult
@@ -48,12 +48,12 @@ $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'")
 #    $permissionAccessJson = "[" + $permissionAccessJson + "]"
 #}
 
-if($applicationInfo.Length -eq 0) {
-  write-host "Azure Ad Application named '$applicationName' doesn't exists"
-  exit 1
-}
+#if($applicationInfo.Length -eq 0) {
+#  write-host "Azure Ad Application named '$applicationName' doesn't exists"
+#  exit 1
+#}
 
-write-host "Azure ApplicationID: $($applicationInfo.appId)"
-write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
+#write-host "Azure ApplicationID: $($applicationInfo.appId)"
+#write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
 az account clear
