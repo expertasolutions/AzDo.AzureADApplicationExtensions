@@ -49,4 +49,4 @@ write-host "inside the task"
 #write-host "Azure ApplicationID: $($applicationInfo.appId)"
 #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-az account clear
+#az account clear
