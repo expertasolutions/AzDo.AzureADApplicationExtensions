@@ -28,9 +28,9 @@ try {
     throw;
 }
 
-#$versionResult = az --version
-#write-host $versionResult
-#$result = [regex]::Match($versionResult, "azure-cli \((([0-9]*).([0-9]*).([0-9]*))\)").captures.groups
+$versionResult = az --version
+write-host $versionResult
+$result = [regex]::Match($versionResult, "azure-cli \((([0-9]*).([0-9]*).([0-9]*))\)").captures.groups
 
 #if($result.length -eq 5)
 #{
