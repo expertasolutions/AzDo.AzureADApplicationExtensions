@@ -22,7 +22,6 @@ write-host $applicationName
 
 try {
     $test = az --version
-    write-host $test
 } catch {
     write-host "Azure Cli not installed"
     throw;
@@ -42,11 +41,11 @@ $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 
-#$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
-#$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
-#if($applicationInfo.oauth2Permissions.count -eq 1){
-#    $permissionAccessJson = "[" + $permissionAccessJson + "]"
-#}
+$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
+$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
+if($applicationInfo.oauth2Permissions.count -eq 1){
+    $permissionAccessJson = "[" + $permissionAccessJson + "]"
+}
 
 #if($applicationInfo.Length -eq 0) {
 #  write-host "Azure Ad Application named '$applicationName' doesn't exists"
