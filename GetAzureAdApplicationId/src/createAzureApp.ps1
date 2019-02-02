@@ -10,7 +10,7 @@ param(
   , [Parameter(Mandatory=$true, Position=5)]
     [string]$tenantId
 )
-
+write-host "inside the task"
 az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setResult = az account set --subscription $subscriptionId
 
