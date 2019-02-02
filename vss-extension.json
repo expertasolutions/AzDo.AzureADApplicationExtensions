@@ -44,7 +44,6 @@
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" }
   ],
-  "public": true,
   "contributions": [
       {
           "id": "custom-build-release-task",
