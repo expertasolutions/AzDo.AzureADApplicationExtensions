@@ -43,10 +43,6 @@ This task package is compatible with:
 	</thead>
 	<tbody>
 	<tr>
-		<td>Acceptation</td>
-		<td><img src="https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/46"/></td>
-	</tr>
-	<tr>
 		<td>VS-Marketplace</td>
 		<td><img src="https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/48"/></td>
 	</tr>
@@ -55,13 +51,9 @@ This task package is compatible with:
 
 ## GetAzureAdApplicationId (required parameters)
 - Azure subscription
-- Azure AD Admin user
-- Azure AD Admin password
 
 ## ManageAzureApplication (required parameters)
 - Azure subscription
-- Azure AD Admin user
-- Azure AD Admin password
 - Application name
 - Owner (user objectId - GUID)
 - Application domain name
@@ -94,9 +86,3 @@ Both task returns the output variable ($ReferenceName.azureAdApplicationId)
 # Requirements
 
 - Azure CLI (v2.0.52) must be installed on the build agent
-
-# Next features
-
-- Set the owner of the Azure AD Application Service principal
-- Set user/group access to Azure AD Application Service principal
-- Upload application icon for the Azure AD Application

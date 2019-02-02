@@ -2,22 +2,24 @@ param(
     [Parameter(Mandatory=$true, Position=1)]
     [string]$subscriptionId
   , [Parameter(Mandatory=$true, Position=2)]
-    [string]$applicationName
+    [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=3)]
-    [string]$rootDomain
+    [string]$servicePrincipalKey
   , [Parameter(Mandatory=$true, Position=4)]
-    [string]$applicationSecret
+    [string]$tenantId
   , [Parameter(Mandatory=$true, Position=5)]
-    [string]$adUser
+    [string]$applicationName
   , [Parameter(Mandatory=$true, Position=6)]
-    [string]$adPwd
+    [string]$rootDomain
   , [Parameter(Mandatory=$true, Position=7)]
+    [string]$applicationSecret
+  , [Parameter(Mandatory=$true, Position=8)]
     [string]$manifestFile
-  , [Parameter(Mandatory=$false, Position=7)]
-    [string]$homeUrl
-  , [Parameter(Mandatory=$false, Position=8)]
-    [string]$replyUrls
   , [Parameter(Mandatory=$false, Position=9)]
+    [string]$homeUrl
+  , [Parameter(Mandatory=$false, Position=10)]
+    [string]$replyUrls
+  , [Parameter(Mandatory=$false, Position=11)]
     [string]$ownerId
 )
 
@@ -45,7 +47,7 @@ if($major -ge 2 -and $minor -eq 0 -and $build -ge 52){
   $goodVersion = $true
 }
 
-$loginResult = az login -u $adUser -p $adPwd
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setResult = az account set --subscription $subscriptionId
 
 if($homeUrl.length -eq 0)
@@ -129,6 +131,6 @@ if($goodVersion -eq $true)
   write-host "Azure Cli Version: $major.$minor.$build doesn't provide set function on Application Owner change and Grant Application permissions"
 }
 
-az logout
+$logoutResult = az account clear
 
 write-host "Azure ApplicationID: $($applicationId)"

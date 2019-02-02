@@ -4,9 +4,9 @@ param(
   , [Parameter(Mandatory=$true, Position=2)]
     [string]$applicationName
   , [Parameter(Mandatory=$true, Position=3)]
-    [string]$adUser
+    [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=4)]
-    [string]$adPwd
+    [string]$servicePrincipalKey
 )
 
 try {
@@ -29,7 +29,7 @@ $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 
-$loginResult = az login -u $adUser -p $adPwd
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setResult = az account set --subscription $subscriptionId
 
 $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
@@ -46,4 +46,4 @@ if($applicationInfo.Length -eq 0) {
 write-host "Azure ApplicationID: $($applicationInfo.appId)"
 write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-$logoutResult = az logout
+$logoutResult = az account clear
