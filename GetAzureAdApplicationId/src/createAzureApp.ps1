@@ -12,7 +12,7 @@ param(
 )
 
 write-host "inside the task"
-#az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 #az account set --subscription $subscriptionId
 
 #try {
