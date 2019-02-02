@@ -56,4 +56,4 @@ write-host $applicationName
 #write-host "Azure ApplicationID: $($applicationInfo.appId)"
 #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-az account clear
+$logoutResult = az account clear
