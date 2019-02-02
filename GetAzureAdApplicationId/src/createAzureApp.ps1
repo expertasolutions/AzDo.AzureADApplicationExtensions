@@ -11,14 +11,14 @@ param(
     [string]$applicationName
 )
 
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$setSubResult = az account set --subscription $subscriptionId
+
 write-host $subscriptionId
 write-host $servicePrincipalId
 write-host $servicePrincipalKey
 write-host $tenantId
 write-host $applicationName
-
-az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-az account set --subscription $subscriptionId
 
 #try {
 #    $test = az --version
@@ -42,7 +42,7 @@ az account set --subscription $subscriptionId
 
 #write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+#$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
 #$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
 #if($applicationInfo.oauth2Permissions.count -eq 1){
 #    $permissionAccessJson = "[" + $permissionAccessJson + "]"
