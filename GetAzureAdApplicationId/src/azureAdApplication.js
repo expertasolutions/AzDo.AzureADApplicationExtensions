@@ -16,8 +16,6 @@ try {
     
     var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
     var applicationName = tl.getInput("applicationName", true);
-    var adminuser = tl.getInput("azadadminuser", true);
-    var adminpwd = tl.getInput("azadadminpwd", true);
     
     var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
 

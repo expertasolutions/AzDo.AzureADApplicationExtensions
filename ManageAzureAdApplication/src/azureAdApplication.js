@@ -23,8 +23,6 @@ try {
     var ownerId = tl.getInput("applicationOwnerId", true);
     var rootDomain = tl.getInput("rootDomain", true);
     var applicationSecret = tl.getInput("applicationSecretPassword", true);
-    var adminuser = tl.getInput("azadadminuser", true);
-    var adminpwd = tl.getInput("azadadminpwd", true);
     var requiredResource = tl.getInput("requiredResource", true);
     var homeUrl = tl.getInput("homeUrl", false);
     var replyUrls = tl.getInput("replyUrls", false);
