@@ -14,12 +14,6 @@ param(
 $loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setSubResult = az account set --subscription $subscriptionId
 
-write-host $subscriptionId
-write-host $servicePrincipalId
-write-host $servicePrincipalKey
-write-host $tenantId
-write-host $applicationName
-
 try {
     $test = az --version
 } catch {
@@ -42,10 +36,10 @@ $goodVersion = $false
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 
 $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
-$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
-if($applicationInfo.oauth2Permissions.count -eq 1){
-    $permissionAccessJson = "[" + $permissionAccessJson + "]"
-}
+#$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
+#if($applicationInfo.oauth2Permissions.count -eq 1){
+#    $permissionAccessJson = "[" + $permissionAccessJson + "]"
+#}
 
 #if($applicationInfo.Length -eq 0) {
 #  write-host "Azure Ad Application named '$applicationName' doesn't exists"
