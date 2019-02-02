@@ -5,18 +5,20 @@ param(
     [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=3)]
     [string]$servicePrincipalKey
-#  , [Parameter(Mandatory=$true, Position=4)]
-#    [string]$tenantId
-#  , [Parameter(Mandatory=$true, Position=5)]
-#    [string]$applicationName
+  , [Parameter(Mandatory=$true, Position=4)]
+    [string]$tenantId
+  , [Parameter(Mandatory=$true, Position=5)]
+    [string]$applicationName
 )
 
 write-host "inside the task"
 write-host $subscriptionId
 write-host $servicePrincipalId
 write-host $servicePrincipalKey
+write-host $tenantId
+write-host $applicationName
 
-az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 #az account set --subscription $subscriptionId
 
 #try {
@@ -53,4 +55,4 @@ az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --te
 #write-host "Azure ApplicationID: $($applicationInfo.appId)"
 #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-#az account clear
+az account clear
