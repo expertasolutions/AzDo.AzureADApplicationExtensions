@@ -11,6 +11,9 @@ param(
     [string]$tenantId
 )
 
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$setResult = az account set --subscription $subscriptionId
+
 try {
     $test = az --version
 } catch {
@@ -30,9 +33,6 @@ if($result.length -eq 5)
 $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
-
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setResult = az account set --subscription $subscriptionId
 
 $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
 $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
