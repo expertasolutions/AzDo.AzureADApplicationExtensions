@@ -58,12 +58,10 @@ try {
             pwsh.dispose();
         }).catch(function(err){
             console.log(err);
-            console.log(err.message);
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
             pwsh.dispose();
         });
 } catch (err) {
     console.log(err);
-    console.log(err.message);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }

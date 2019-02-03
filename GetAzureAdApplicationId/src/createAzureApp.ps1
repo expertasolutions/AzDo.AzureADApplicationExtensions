@@ -34,23 +34,18 @@ if($result.length -eq 5)
 $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
-try {
-  az ad app list --subscription $subscriptionId #--filter "displayName eq '$applicationName'"
-} catch {
-  write-host "error "
-  write-host $_
+$applicationInfo = az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId 
+$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
+if($applicationInfo.oauth2Permissions.count -eq 1){
+    $permissionAccessJson = "[" + $permissionAccessJson + "]"
 }
-#$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
-#if($applicationInfo.oauth2Permissions.count -eq 1){
-#    $permissionAccessJson = "[" + $permissionAccessJson + "]"
-#}
 
 #if($applicationInfo.Length -eq 0) {
 #  write-host "Azure Ad Application named '$applicationName' doesn't exists"
 #  exit 1
 #}
 
-#write-host "Azure ApplicationID: $($applicationInfo.appId)"
-#write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
+write-host "Azure ApplicationID: $($applicationInfo.appId)"
+write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
 $logoutResult = az account clear
