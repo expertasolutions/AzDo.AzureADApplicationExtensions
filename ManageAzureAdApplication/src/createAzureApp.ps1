@@ -23,6 +23,9 @@ param(
     [string]$ownerId
 )
 
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$setResult = az account set --subscription $subscriptionId
+
 try {
   $test = az --version
 } catch {
@@ -46,9 +49,6 @@ write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 if($major -ge 2 -and $minor -eq 0 -and $build -ge 52){
   $goodVersion = $true
 }
-
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setResult = az account set --subscription $subscriptionId
 
 if($homeUrl.length -eq 0)
 {
