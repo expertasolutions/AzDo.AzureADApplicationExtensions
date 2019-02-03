@@ -65,7 +65,9 @@ $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" 
 $applicationId = ""
 
 if($applicationInfo.Length -eq 0) {
-  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --debug --verbose) | ConvertFrom-Json
+  write-host "*****"
+  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --debug --verbose --subscription $subscriptionId) | ConvertFrom-Json
+  write-host "*****"
   $applicationId = $servicePrincipalResult.appId
 } else {
   $applicationId = $applicationInfo.appId
