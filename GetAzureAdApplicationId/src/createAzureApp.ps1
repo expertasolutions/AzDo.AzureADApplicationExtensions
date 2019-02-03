@@ -40,10 +40,10 @@ if($applicationInfo.oauth2Permissions.count -eq 1){
     $permissionAccessJson = "[" + $permissionAccessJson + "]"
 }
 
-#if($applicationInfo.Length -eq 0) {
-#  write-host "Azure Ad Application named '$applicationName' doesn't exists"
-#  exit 1
-#}
+if($applicationInfo.Length -eq 0) {
+  write-host "Azure Ad Application named '$applicationName' doesn't exists"
+  exit 1
+}
 
 write-host "Azure ApplicationID: $($applicationInfo.appId)"
 write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
