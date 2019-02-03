@@ -76,27 +76,27 @@ write-host ""
 
 # Set the IdentifierUris
 write-host "Set IdentifierUris... " -NoNewline
-az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']"
+$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']"
 write-host " Done"
 
 # Set the homepage url
 write-host "Set homepage url... " -NoNewline
-az ad app update --id $applicationId --set homepage="$homeUrl"
+$result = az ad app update --id $applicationId --set homepage="$homeUrl"
 write-host " Done"
 
 # Set the reply urls
 write-host "Set Reply urls... " -NoNewline
-az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'"))
+$result = az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'"))
 write-host " Done"
 
 # Reset the Application Password
 write-host "Set application password... " -NoNewline
-az ad app update --id $applicationId --password $applicationSecret
+$result = az ad app update --id $applicationId --password $applicationSecret
 write-host " Done"
 
 # Apply the Required Resources
 write-host "Set Required resources accesses... " -NoNewline
-az ad app update --id $applicationId --required-resource-accesses $manifestFile
+$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile
 write-host " Done"
 
 # Sets the Application Owner
