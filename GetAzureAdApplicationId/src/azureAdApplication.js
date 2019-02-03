@@ -61,5 +61,6 @@ try {
             pwsh.dispose();
         });
 } catch (err) {
+    console.log(err.message);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
