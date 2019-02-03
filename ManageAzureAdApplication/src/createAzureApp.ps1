@@ -66,7 +66,7 @@ $applicationId = ""
 
 if($applicationInfo.Length -eq 0) {
   write-host "*****"
-  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --debug --verbose --subscription $subscriptionId) | ConvertFrom-Json
+  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --subscription $subscriptionId) | ConvertFrom-Json
   write-host "*****"
   $applicationId = $servicePrincipalResult.appId
 } else {
@@ -76,38 +76,38 @@ write-host ""
 
 # Set the IdentifierUris
 write-host "Set IdentifierUris... " -NoNewline
-#$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']" --subscription $subscriptionId
+$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']" --subscription $subscriptionId
 write-host " Done"
 
 # Set the homepage url
 write-host "Set homepage url... " -NoNewline
-#$result = az ad app update --id $applicationId --set homepage="$homeUrl" --subscription $subscriptionId
+$result = az ad app update --id $applicationId --set homepage="$homeUrl" --subscription $subscriptionId
 write-host " Done"
 
 # Set the reply urls
 write-host "Set Reply urls... " -NoNewline
-#$result = az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'")) --subscription $subscriptionId
+$result = az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'")) --subscription $subscriptionId
 write-host " Done"
 
 # Reset the Application Password
 write-host "Set application password... " -NoNewline
-#$result = az ad app update --id $applicationId --password $applicationSecret --subscription $subscriptionId
+$result = az ad app update --id $applicationId --password $applicationSecret --subscription $subscriptionId
 write-host " Done"
 
 # Apply the Required Resources
 write-host "Set Required resources accesses... " -NoNewline
-#$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile --subscription $subscriptionId
+$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile --subscription $subscriptionId
 write-host " Done"
 
 # Sets the Application Owner
 
 if($goodVersion -eq $true)
 {
-  #$ownerList = (az ad app owner list --id $applicationId --subscription $subscriptionId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
+  $ownerList = (az ad app owner list --id $applicationId --subscription $subscriptionId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
   if ($ownerList.length -eq 0)
   {
     write-host "Set Application Owner..." -NoNewline
-    #az ad app owner add --id $applicationId --owner-object-id $ownerId --subscription $subscriptionId
+    az ad app owner add --id $applicationId --owner-object-id $ownerId --subscription $subscriptionId
     write-host " Done"
   }
 
@@ -123,7 +123,7 @@ if($goodVersion -eq $true)
     }
     else
     {
-      #$grantResult = az ad app permission grant --id $applicationId --api $appId --subscription $subscriptionId
+      $grantResult = az ad app permission grant --id $applicationId --api $appId --subscription $subscriptionId
       write-host "Granted" -ForegroundColor Green
     }
   }
