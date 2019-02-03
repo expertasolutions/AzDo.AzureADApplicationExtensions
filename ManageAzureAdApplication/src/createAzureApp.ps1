@@ -60,7 +60,7 @@ if($replyUrls.length -eq 0)
   $replyUrls = "['http://$applicationName.$rootDomain', 'http://$applicationName.$rootDomain/signin-oidc','http://$applicationName.$rootDomain/signin-aad']"
 }
 
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
 
 $applicationId = ""
 
