@@ -107,7 +107,7 @@ if($goodVersion -eq $true)
   if ($ownerList.length -eq 0)
   {
     write-host "Set Application Owner..." -NoNewline
-    az ad app owner add --id $applicationId --owner-object-id $ownerId --subscription $subscriptionId
+    #az ad app owner add --id $applicationId --owner-object-id $ownerId --subscription $subscriptionId
     write-host " Done"
   }
 
