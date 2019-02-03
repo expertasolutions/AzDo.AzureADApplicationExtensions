@@ -18,22 +18,25 @@ var uuidV4 = require('uuid/v4');
 
 try {
     
-    var azureEndpointSubscriptionId = tl.getInput("azureSubscriptionEndpoint", true);
+    var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
     var applicationName = tl.getInput("applicationName", true);
     var ownerId = tl.getInput("applicationOwnerId", true);
     var rootDomain = tl.getInput("rootDomain", true);
     var applicationSecret = tl.getInput("applicationSecretPassword", true);
-    var adminuser = tl.getInput("azadadminuser", true);
-    var adminpwd = tl.getInput("azadadminpwd", true);
     var requiredResource = tl.getInput("requiredResource", true);
     var homeUrl = tl.getInput("homeUrl", false);
     var replyUrls = tl.getInput("replyUrls", false);
     
-    var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscriptionId, "subscriptionId", false);
+    var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
+
+    var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false);
+    var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false);
+    var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false);
 
     console.log("SubscriptionId: " + subcriptionId);
-    console.log("AdminAdUser: " + adminuser);
-    console.log("AdminAdPwd: " + adminpwd);
+    console.log("ServicePrincipalId: " + servicePrincipalId);
+    console.log("ServicePrincipalKey: " + servicePrincipalKey);
+    console.log("TenantId: " + tenantId);
     console.log("Application Name: " + applicationName);
     console.log("Root Domain: " + rootDomain);
     console.log("ApplicationSecret: " + applicationSecret);
@@ -52,9 +55,11 @@ try {
         noProfile: true
     });
     
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "' -applicationName '" + applicationName 
-        + "' -rootDomain '" + rootDomain + "' -applicationSecret '" + applicationSecret + "' -adUser '" + adminuser 
-        + "' -adPwd '" + adminpwd + "' -manifestFile '" + filePath + "' -homeUrl '" + homeUrl + "' -replyUrls '" + replyUrls + "' -ownerId '" + ownerId + "'")
+    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'"
+        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
+        + " -applicationName '" + applicationName + "'"
+        + " -rootDomain '" + rootDomain + "' -applicationSecret '" + applicationSecret + "'"
+        + " -manifestFile '" + filePath + "' -homeUrl '" + homeUrl + "' -replyUrls '" + replyUrls + "' -ownerId '" + ownerId + "'")
         .then(function() {
             return pwsh.invoke();
         }).then(function(output){

@@ -2,12 +2,17 @@ param(
     [Parameter(Mandatory=$true, Position=1)]
     [string]$subscriptionId
   , [Parameter(Mandatory=$true, Position=2)]
-    [string]$applicationName
+    [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=3)]
-    [string]$adUser
+    [string]$servicePrincipalKey
   , [Parameter(Mandatory=$true, Position=4)]
-    [string]$adPwd
+    [string]$tenantId
+  , [Parameter(Mandatory=$true, Position=5)]
+    [string]$applicationName
 )
+
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$setSubResult = az account set --subscription $subscriptionId
 
 try {
     $test = az --version
@@ -28,11 +33,7 @@ if($result.length -eq 5)
 $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
-
-$loginResult = az login -u $adUser -p $adPwd
-$setResult = az account set --subscription $subscriptionId
-
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
 $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
 if($applicationInfo.oauth2Permissions.count -eq 1){
     $permissionAccessJson = "[" + $permissionAccessJson + "]"
@@ -46,4 +47,4 @@ if($applicationInfo.Length -eq 0) {
 write-host "Azure ApplicationID: $($applicationInfo.appId)"
 write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-$logoutResult = az logout
+$logoutResult = az account clear

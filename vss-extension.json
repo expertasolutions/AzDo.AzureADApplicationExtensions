@@ -2,8 +2,8 @@
   "manifestVersion": 1,
   "id": "AzureAdApplication",
   "name": "Azure AD Application tasks management",
-  "version": "__major__.__minor__.__patch__",
-  "publisher": "experta",
+  "version": "0.0.0",
+  "publisher": "ExpertaPreview",
   "targets": [
       {
           "id": "Microsoft.VisualStudio.Services"
@@ -44,7 +44,6 @@
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" }
   ],
-  "public": true,
   "contributions": [
       {
           "id": "custom-build-release-task",

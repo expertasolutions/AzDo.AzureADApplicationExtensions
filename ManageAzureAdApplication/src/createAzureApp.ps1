@@ -2,24 +2,29 @@ param(
     [Parameter(Mandatory=$true, Position=1)]
     [string]$subscriptionId
   , [Parameter(Mandatory=$true, Position=2)]
-    [string]$applicationName
+    [string]$servicePrincipalId
   , [Parameter(Mandatory=$true, Position=3)]
-    [string]$rootDomain
+    [string]$servicePrincipalKey
   , [Parameter(Mandatory=$true, Position=4)]
-    [string]$applicationSecret
+    [string]$tenantId
   , [Parameter(Mandatory=$true, Position=5)]
-    [string]$adUser
+    [string]$applicationName
   , [Parameter(Mandatory=$true, Position=6)]
-    [string]$adPwd
+    [string]$rootDomain
   , [Parameter(Mandatory=$true, Position=7)]
+    [string]$applicationSecret
+  , [Parameter(Mandatory=$true, Position=8)]
     [string]$manifestFile
-  , [Parameter(Mandatory=$false, Position=7)]
-    [string]$homeUrl
-  , [Parameter(Mandatory=$false, Position=8)]
-    [string]$replyUrls
   , [Parameter(Mandatory=$false, Position=9)]
+    [string]$homeUrl
+  , [Parameter(Mandatory=$false, Position=10)]
+    [string]$replyUrls
+  , [Parameter(Mandatory=$false, Position=11)]
     [string]$ownerId
 )
+
+$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
+$setResult = az account set --subscription $subscriptionId
 
 try {
   $test = az --version
@@ -45,9 +50,6 @@ if($major -ge 2 -and $minor -eq 0 -and $build -ge 52){
   $goodVersion = $true
 }
 
-$loginResult = az login -u $adUser -p $adPwd
-$setResult = az account set --subscription $subscriptionId
-
 if($homeUrl.length -eq 0)
 {
   $homeUrl = "http://$applicationName.$rootDomain"
@@ -58,14 +60,14 @@ if($replyUrls.length -eq 0)
   $replyUrls = "['http://$applicationName.$rootDomain', 'http://$applicationName.$rootDomain/signin-oidc','http://$applicationName.$rootDomain/signin-aad']"
 }
 
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
 
 $applicationId = ""
 
 if($applicationInfo.Length -eq 0) {
-  #write-host "Creating AzureAd Application named '$($applicationName)' ... " -NoNewLine
-  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret) | ConvertFrom-Json
-  #write-host "Done"
+  write-host "*****"
+  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --subscription $subscriptionId) | ConvertFrom-Json
+  write-host "*****"
   $applicationId = $servicePrincipalResult.appId
 } else {
   $applicationId = $applicationInfo.appId
@@ -74,38 +76,38 @@ write-host ""
 
 # Set the IdentifierUris
 write-host "Set IdentifierUris... " -NoNewline
-az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']"
+$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']" --subscription $subscriptionId
 write-host " Done"
 
 # Set the homepage url
 write-host "Set homepage url... " -NoNewline
-az ad app update --id $applicationId --set homepage="$homeUrl"
+$result = az ad app update --id $applicationId --set homepage="$homeUrl" --subscription $subscriptionId
 write-host " Done"
 
 # Set the reply urls
 write-host "Set Reply urls... " -NoNewline
-az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'"))
+$result = az ad app update --id $applicationId --set replyUrls=$($replyUrls.replace('"',"'")) --subscription $subscriptionId
 write-host " Done"
 
 # Reset the Application Password
 write-host "Set application password... " -NoNewline
-az ad app update --id $applicationId --password $applicationSecret
+$result = az ad app update --id $applicationId --password $applicationSecret --subscription $subscriptionId
 write-host " Done"
 
 # Apply the Required Resources
 write-host "Set Required resources accesses... " -NoNewline
-az ad app update --id $applicationId --required-resource-accesses $manifestFile
+$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile --subscription $subscriptionId
 write-host " Done"
 
 # Sets the Application Owner
 
 if($goodVersion -eq $true)
 {
-  $ownerList = (az ad app owner list --id $applicationId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
+  $ownerList = (az ad app owner list --id $applicationId --subscription $subscriptionId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
   if ($ownerList.length -eq 0)
   {
     write-host "Set Application Owner..." -NoNewline
-    az ad app owner add --id $applicationId --owner-object-id $ownerId
+    az ad app owner add --id $applicationId --owner-object-id $ownerId --subscription $subscriptionId
     write-host " Done"
   }
 
@@ -121,7 +123,7 @@ if($goodVersion -eq $true)
     }
     else
     {
-      $grantResult = az ad app permission grant --id $applicationId --api $appId
+      $grantResult = az ad app permission grant --id $applicationId --api $appId --subscription $subscriptionId
       write-host "Granted" -ForegroundColor Green
     }
   }
@@ -129,6 +131,6 @@ if($goodVersion -eq $true)
   write-host "Azure Cli Version: $major.$minor.$build doesn't provide set function on Application Owner change and Grant Application permissions"
 }
 
-az logout
+$logoutResult = az account clear
 
 write-host "Azure ApplicationID: $($applicationId)"

@@ -14,16 +14,20 @@ var shell = require('node-powershell');
 
 try {
     
-    var azureEndpointSubscriptionId = tl.getInput("azureSubscriptionEndpoint", true);
+    var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
     var applicationName = tl.getInput("applicationName", true);
-    var adminuser = tl.getInput("azadadminuser", true);
-    var adminpwd = tl.getInput("azadadminpwd", true);
     
-    var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscriptionId, "subscriptionId", false);
+    var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
+
+    var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false);
+    var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false);
+    var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false);
 
     console.log("SubscriptionId: " + subcriptionId);
-    console.log("AdminAdUser: " + adminuser);
-    console.log("AdminAdPwd: " + adminpwd);
+    console.log("ServicePrincipalId: " + servicePrincipalId);
+    console.log("ServicePrincipalKey: " + servicePrincipalKey);
+    console.log("TenantId: " + tenantId);
+
     console.log("Application Name: " + applicationName);
    
     var pwsh = new shell({
@@ -31,11 +35,13 @@ try {
         noProfile: true
     });
     
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "' -applicationName '" + applicationName 
-        + "' -adUser '" + adminuser + "' -adPwd '" + adminpwd + "'");
-    
-    pwsh.invoke()
-        .then(function(output) {
+    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'"
+        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
+        + " -applicationName '" + applicationName + "'")
+        .then(function(){
+            return pwsh.invoke();
+        })
+        .then(function(output){
             console.log(output);
             
             var regx = "(Azure ApplicationID): ([A-Za-z0-9\\-]*)";
@@ -51,10 +57,11 @@ try {
             
             pwsh.dispose();
         }).catch(function(err){
+            console.log(err);
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
             pwsh.dispose();
         });
-    
 } catch (err) {
+    console.log(err);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
