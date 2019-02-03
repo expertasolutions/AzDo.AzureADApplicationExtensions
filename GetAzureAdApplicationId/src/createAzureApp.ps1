@@ -35,7 +35,7 @@ $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 try {
-  az ad app list #--filter "displayName eq '$applicationName'"
+  az ad app list --subscription $subscriptionId #--filter "displayName eq '$applicationName'"
 } catch {
   write-host "error "
   write-host $_
