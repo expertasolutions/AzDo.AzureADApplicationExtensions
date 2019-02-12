@@ -67,7 +67,7 @@
         }
       },
       {
-        "id": "custom-build-release-task-2",
+        "id": "custom-build-release-task-3",
         "type": "ms.vss-distributed-task.task",
         "targets": [
           "ms.vss-distributed-task.tasks"
