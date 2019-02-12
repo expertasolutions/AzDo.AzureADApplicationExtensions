@@ -35,8 +35,8 @@
             "label": "Application Id",
             "defaultValue":"",
             "required": true,
-            "helpMarkDown":"",
-        },
+            "helpMarkDown":""
+        }
     ],
     "execution": {
         "Node": {
