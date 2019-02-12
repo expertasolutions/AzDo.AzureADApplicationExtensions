@@ -12,7 +12,7 @@
         "Minor": 0,
         "Patch": 0
     },
-    "instanceNameFormat": "Azure AD Application",
+    "instanceNameFormat": "Remove Azure AD Application",
     "groups": [
         {
             "name": "customazureadapplicationdetails",
