@@ -43,7 +43,7 @@
   "files": [
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" },
-      { "path": "RemoveAzureADApplication" }
+      { "path": "RemoveAzureAdApplication" }
   ],
   "contributions": [
       {
@@ -73,7 +73,7 @@
           "ms.vss-distributed-task.tasks"
         ],
         "properties": {
-          "name": "RemoveAzureADApplication"
+          "name": "RemoveAzureAdApplication"
         }
       }
   ]
