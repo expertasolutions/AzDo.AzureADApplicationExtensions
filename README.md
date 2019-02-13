@@ -10,6 +10,8 @@ Available tasks:
 	- Set the HomeUrl, Reply Urls
 	- Set the Azure AD Application owner
 	- Set Azure AD Application client secret
+- RemoveAzureADApplication
+	- Remove an existing Azure AD Application
 
 This task package is compatible with:
 - Hosted macOS build agent
@@ -79,6 +81,9 @@ This task package is compatible with:
 - Reply Urls (json)
 
 	```["http://myurl.com","https://myurl.com]```
+
+## RemoveAzureADApplication (required parameters)
+- Azure AD Application ID
 
 #Task Output variables
 Both task returns the output variable ($ReferenceName.azureAdApplicationId)
