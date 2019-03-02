@@ -39,7 +39,6 @@ try {
     console.log("TenantId: " + tenantId);
     console.log("Application Name: " + applicationName);
     console.log("Root Domain: " + rootDomain);
-    console.log("ApplicationSecret: " + applicationSecret);
     console.log("Home url: " + homeUrl);
     console.log("Reply Urls: " + replyUrls);
     console.log("OwnerId: " + ownerId);
