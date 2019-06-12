@@ -66,7 +66,7 @@ $applicationId = ""
 
 if($applicationInfo.Length -eq 0) {
   write-host "*****"
-  $servicePrincipalResult = $(az ad sp create-for-rbac --name "http://$applicationName" --password $applicationSecret --subscription $subscriptionId) | ConvertFrom-Json
+  $servicePrincipalResult = $(az ad sp create-for-rbac --name $applicationName --password $applicationSecret --subscription $subscriptionId) | ConvertFrom-Json
   write-host "*****"
   $applicationId = $servicePrincipalResult.appId
 } else {
