@@ -33,7 +33,7 @@ if($result.length -eq 5)
 $goodVersion = $false
 
 write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'" --subscription $subscriptionId) | ConvertFrom-Json
+$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
 $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
 if($applicationInfo.oauth2Permissions.count -eq 1){
     $permissionAccessJson = "[" + $permissionAccessJson + "]"

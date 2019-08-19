@@ -38,7 +38,7 @@ if($major -ge 2 -and $minor -eq 0 -and $build -ge 52){
   $goodVersion = $true
 }
 
-$applicationInfo = (az ad app show --id $applicationId --subscription $subscriptionId) | ConvertFrom-Json
+$applicationInfo = (az ad app show --id $applicationId) | ConvertFrom-Json
 
 if($applicationInfo.Length -eq 0) {
   write-host "Azure AD application with id '$applicationId' does not exist"
@@ -48,7 +48,7 @@ write-host ""
 if($goodVersion -eq $true)
 {
   # Remove the application here
-  $result = az ad app delete --id $applicationId --subscription $subscriptionId
+  $result = az ad app delete --id $applicationId
 
 } else {
   write-host "Azure Cli Version: $major.$minor.$build doesn't provide set function on Application Owner change and Grant Application permissions"
