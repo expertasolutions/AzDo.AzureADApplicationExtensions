@@ -21,18 +21,6 @@ try {
     throw;
 }
 
-$versionResult = az --version
-$result = [regex]::Match($versionResult, "azure-cli \((([0-9]*).([0-9]*).([0-9]*))\)").captures.groups
-
-if($result.length -eq 5)
-{
-    $major = $result[2].value
-    $minor = $result[3].Value
-    $build = $result[4].value
-}
-$goodVersion = $false
-
-write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
 $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
 $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
 if($applicationInfo.oauth2Permissions.count -eq 1){

@@ -17,7 +17,7 @@ This task package is compatible with:
 - Hosted macOS build agent
 - Hosted vs2017 (soon)
 - Hosted ubuntu 1640 (soon)
-- Any private build agent with Azure CLI (v2.0.52 required)
+- Any private build agent with Azure CLI (v2.0.71 required)
 
 ## Builds status
 <table>
@@ -90,4 +90,4 @@ Both task returns the output variable ($ReferenceName.azureAdApplicationId)
 
 # Requirements
 
-- Azure CLI (v2.0.52) must be installed on the build agent
+- Azure CLI (v2.0.71) must be installed on the build agent

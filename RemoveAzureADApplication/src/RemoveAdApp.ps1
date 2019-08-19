@@ -21,23 +21,6 @@ try {
   throw;
 }
 
-$versionResult = az --version
-$result = [regex]::Match($versionResult, "azure-cli \((([0-9]*).([0-9]*).([0-9]*))\)").captures.groups
-
-if($result.length -eq 5)
-{
-  $major = $result[2].value
-  $minor = $result[3].Value
-  $build = $result[4].value
-}
-$goodVersion = $false
-
-write-host "Azure Cli Version '$major.$minor.$build' installed on build agent"
-
-if($major -ge 2 -and $minor -eq 0 -and $build -ge 52){
-  $goodVersion = $true
-}
-
 $applicationInfo = (az ad app show --id $applicationId) | ConvertFrom-Json
 
 if($applicationInfo.Length -eq 0) {
@@ -45,14 +28,8 @@ if($applicationInfo.Length -eq 0) {
 }
 write-host ""
 
-if($goodVersion -eq $true)
-{
-  # Remove the application here
-  $result = az ad app delete --id $applicationId
-
-} else {
-  write-host "Azure Cli Version: $major.$minor.$build doesn't provide set function on Application Owner change and Grant Application permissions"
-}
+# Remove the application here
+$result = az ad app delete --id $applicationId
 
 $logoutResult = az account clear
 
