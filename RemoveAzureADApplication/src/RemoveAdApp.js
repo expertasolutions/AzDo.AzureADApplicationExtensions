@@ -43,8 +43,6 @@ try {
         })
         .then(function(output){
             console.log(output);
-            
-            
             pwsh.dispose();
         }).catch(function(err){
             console.log(err);

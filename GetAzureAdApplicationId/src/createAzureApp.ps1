@@ -35,4 +35,4 @@ if($applicationInfo.Length -eq 0) {
 write-host "Azure ApplicationID: $($applicationInfo.appId)"
 write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-$logoutResult = az account clear
+#$logoutResult = az account clear
