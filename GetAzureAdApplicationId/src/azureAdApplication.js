@@ -42,7 +42,7 @@ try {
             return pwsh.invoke();
         })
         .then(function(output){
-            console.log(output);
+            //console.log(output);
             
             //console.log("Getting the Azure ApplicationId value...");
             //var regx = "(Azure ApplicationID): ([A-Za-z0-9\-]*)";
@@ -62,10 +62,10 @@ try {
             //pwsh.dispose();
         }).catch(function(err){
             console.log(err);
-            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed 2');
             pwsh.dispose();
         });
 } catch (err) {
     console.log(err);
-    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed 1');
 }
