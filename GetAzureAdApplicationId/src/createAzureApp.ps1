@@ -11,8 +11,8 @@ param(
     [string]$applicationName
 )
 
-#az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
-#az account set --subscription $subscriptionId | Out-Null
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
+az account set --subscription $subscriptionId | Out-Null
 
 #try {
     #az --version | Out-Null
@@ -36,7 +36,7 @@ param(
   #write-host "Azure ApplicationID: $($applicationInfo.appId)"
   #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
-  #az account clear | Out-Null
+  az account clear | Out-Null
 #}
 #catch {
 #  write-host "error in ps"
