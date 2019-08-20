@@ -14,13 +14,6 @@ param(
 az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
 az account set --subscription $subscriptionId | Out-Null
 
-#try {
-    #az --version | Out-Null
-#} catch {
-    #write-host "Azure Cli not installed"
-    #throw;
-#}
-
 try {
   $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
   $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress

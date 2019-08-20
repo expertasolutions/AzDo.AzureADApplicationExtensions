@@ -26,13 +26,6 @@ param(
 $loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
 $setResult = az account set --subscription $subscriptionId
 
-try {
-  $test = az --version
-} catch {
-  write-host "Azure Cli not installed"
-  throw;
-}
-
 if($homeUrl.length -eq 0)
 {
   $homeUrl = "http://$applicationName.$rootDomain"
