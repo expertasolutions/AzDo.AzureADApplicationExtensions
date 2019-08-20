@@ -23,8 +23,8 @@ param(
     [string]$ownerId
 )
 
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setResult = az account set --subscription $subscriptionId
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
+az account set --subscription $subscriptionId | Out-Null
 
 if($homeUrl.length -eq 0)
 {
@@ -101,6 +101,6 @@ $perms | ForEach-Object {
   }
 }
 
-$logoutResult = az account clear
+az account clear | Out-Null
 
 write-host "Azure ApplicationID: $($applicationId)"
