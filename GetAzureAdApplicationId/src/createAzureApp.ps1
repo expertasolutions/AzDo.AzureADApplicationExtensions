@@ -20,19 +20,22 @@ try {
     write-host "Azure Cli not installed"
     throw;
 }
+try {
+  $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+  $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
+  if($applicationInfo.oauth2Permissions.count -eq 1){
+      $permissionAccessJson = "[" + $permissionAccessJson + "]"
+  }
 
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
-$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
-if($applicationInfo.oauth2Permissions.count -eq 1){
-    $permissionAccessJson = "[" + $permissionAccessJson + "]"
+  if($applicationInfo.Length -eq 0) {
+    write-host "Azure Ad Application named '$applicationName' doesn't exists"
+    exit 1
+  }
+
+  write-host "Azure ApplicationID: $($applicationInfo.appId)"
+  write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 }
-
-if($applicationInfo.Length -eq 0) {
-  write-host "Azure Ad Application named '$applicationName' doesn't exists"
-  exit 1
+catch {
+  write-host "error in ps"
 }
-
-write-host "Azure ApplicationID: $($applicationInfo.appId)"
-write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
-
-#$logoutResult = az account clear
+$logoutResult = az account clear
