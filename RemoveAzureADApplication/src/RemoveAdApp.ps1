@@ -11,15 +11,8 @@ param(
     [string]$applicationId
 )
 
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setResult = az account set --subscription $subscriptionId
-
-try {
-  $test = az --version
-} catch {
-  write-host "Azure Cli not installed"
-  throw;
-}
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
+az account set --subscription $subscriptionId | Out-Null
 
 $applicationInfo = (az ad app show --id $applicationId) | ConvertFrom-Json
 
@@ -31,6 +24,6 @@ write-host ""
 # Remove the application here
 $result = az ad app delete --id $applicationId
 
-$logoutResult = az account clear
+az account clear | out-null
 
 write-host "Azure ApplicationID: $($applicationId)"
