@@ -14,14 +14,14 @@ param(
 #az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
 #az account set --subscription $subscriptionId | Out-Null
 
-try {
-    az --version | Out-Null
-} catch {
-    write-host "Azure Cli not installed"
-    throw;
-}
+#try {
+    #az --version | Out-Null
+#} catch {
+    #write-host "Azure Cli not installed"
+    #throw;
+#}
 
-try {
+#try {
   #$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
   #$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
   #if($applicationInfo.oauth2Permissions.count -eq 1){
@@ -37,7 +37,7 @@ try {
   #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
   #az account clear | Out-Null
-}
-catch {
-  write-host "error in ps"
-}
+#}
+#catch {
+#  write-host "error in ps"
+#}

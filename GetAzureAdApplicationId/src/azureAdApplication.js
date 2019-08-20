@@ -42,6 +42,7 @@ try {
             return pwsh.invoke();
         })
         .then(function(output){
+            console.log("from the output");
             //console.log(output);
             
             //console.log("Getting the Azure ApplicationId value...");
@@ -67,5 +68,5 @@ try {
         });
 } catch (err) {
     console.log(err);
-    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed 1');
+    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
