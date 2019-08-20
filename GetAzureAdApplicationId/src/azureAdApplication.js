@@ -60,7 +60,7 @@ try {
             //console.log("Setting azureAdApplicationResourceAccessJson ...");
             //tl.setVariable("azureAdApplicationResourceAccessJson", permissionJson);
             
-            //pwsh.dispose();
+            pwsh.dispose();
         }).catch(function(err){
             console.log(err);
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed 2');
