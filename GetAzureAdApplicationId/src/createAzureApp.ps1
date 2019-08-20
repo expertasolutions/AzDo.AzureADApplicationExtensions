@@ -11,11 +11,11 @@ param(
     [string]$applicationName
 )
 
-$loginResult = az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId
-$setSubResult = az account set --subscription $subscriptionId
+az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
+az account set --subscription $subscriptionId | Out-Null
 
 try {
-    $test = az --version
+    az --version
 } catch {
     write-host "Azure Cli not installed"
     throw;
