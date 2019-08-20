@@ -15,7 +15,7 @@ az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --te
 az account set --subscription $subscriptionId | Out-Null
 
 try {
-    az --version
+    az --version | Out-Null
 } catch {
     write-host "Azure Cli not installed"
     throw;
