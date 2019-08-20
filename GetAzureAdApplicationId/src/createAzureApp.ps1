@@ -24,14 +24,14 @@ az account set --subscription $subscriptionId | Out-Null
 try {
   $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
   $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
-  #if($applicationInfo.oauth2Permissions.count -eq 1){
-  #    $permissionAccessJson = "[" + $permissionAccessJson + "]"
-  #}
+  if($applicationInfo.oauth2Permissions.count -eq 1){
+      $permissionAccessJson = "[" + $permissionAccessJson + "]"
+  }
 
-  #if($applicationInfo.Length -eq 0) {
-  #  write-host "Azure Ad Application named '$applicationName' doesn't exists"
-  #  exit 1
-  #}
+  if($applicationInfo.Length -eq 0) {
+    write-host "Azure Ad Application named '$applicationName' doesn't exists"
+    exit 1
+  }
 
   write-host "Azure ApplicationID: $($applicationInfo.appId)"
   write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
