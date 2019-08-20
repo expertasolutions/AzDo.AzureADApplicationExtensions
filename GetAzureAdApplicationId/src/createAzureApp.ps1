@@ -23,7 +23,7 @@ az account set --subscription $subscriptionId | Out-Null
 
 try {
   $applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
-  #$permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
+  $permissionAccessJson = $applicationInfo.oauth2Permissions | ConvertTo-Json -Compress
   #if($applicationInfo.oauth2Permissions.count -eq 1){
   #    $permissionAccessJson = "[" + $permissionAccessJson + "]"
   #}
@@ -34,7 +34,7 @@ try {
   #}
 
   write-host "Azure ApplicationID: $($applicationInfo.appId)"
-  #write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
+  write-host "Azure Permission Access Info-json: $($permissionAccessJson)"
 
   az account clear | Out-Null
 }

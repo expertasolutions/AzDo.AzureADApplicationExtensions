@@ -43,15 +43,15 @@ try {
         })
         .then(function(output){
             console.log("from the output");
-            //console.log(output);
+            console.log(output);
             
-            //console.log("Getting the Azure ApplicationId value...");
-            //var regx = "(Azure ApplicationID): ([A-Za-z0-9\-]*)";
-            //var result = output.match(regx);
-            //var appId = result[2];
+            console.log("Getting the Azure ApplicationId value...");
+            var regx = "(Azure ApplicationID): ([A-Za-z0-9\-]*)";
+            var result = output.match(regx);
+            var appId = result[2];
             
-            //console.log("Setting the AzureAdApplicationId ...");
-            //tl.setVariable("azureAdApplicationId", appId);
+            console.log("Setting the AzureAdApplicationId ...");
+            tl.setVariable("azureAdApplicationId", appId);
             
             //console.log("Getting the Azure Permission access ...");
             //var permissionJsonRegx = "(Azure Permission Access Info-json):([\[\w\{\": -.]*\}\])";
