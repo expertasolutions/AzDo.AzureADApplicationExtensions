@@ -54,7 +54,7 @@ try {
             tl.setVariable("azureAdApplicationId", appId);
             
             console.log("Getting the Azure Permission access ...");
-            var permissionJsonRegx = "(Azure Permission Access Info-json):([\\[\\w\\{\": -.]*\\}\\])";
+            var permissionJsonRegx = "(Azure Permission Access Info-json): ([\\[\\w\\{\": -.]*\\}\\])";
             result = output.match(permissionJsonRegx);
             var permissionJson = result[2];
             console.log("Setting azureAdApplicationResourceAccessJson ...");
