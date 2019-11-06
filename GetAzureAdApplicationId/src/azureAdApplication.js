@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 
 var tl = require('azure-pipelines-task-lib');
-var shell = require('node-powershell');
 
 try {
     
@@ -29,41 +28,7 @@ try {
     console.log("TenantId: " + tenantId);
 
     console.log("Application Name: " + applicationName);
-   
-    var pwsh = new shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-    });
-    
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'"
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
-        + " -applicationName '" + applicationName + "'")
-        .then(function(){
-            return pwsh.invoke();
-        })
-        .then(function(output){
-            console.log(output);
-            console.log("Getting the Azure ApplicationId value...");
-            var regx = "(Azure ApplicationID): ([A-Za-z0-9\\-]*)";
-            var result = output.match(regx);
-            var appId = result[2];
-            
-            console.log("Setting the AzureAdApplicationId ...");
-            tl.setVariable("azureAdApplicationId", appId);
-            
-            console.log("Getting the Azure Permission access ...");
-            var permissionJsonRegx = "(Azure Permission Access Info-json): ([\\[\\w\\{\": -.]*\\}\\])";
-            result = output.match(permissionJsonRegx);
-            var permissionJson = result[2];
-            console.log("Setting azureAdApplicationResourceAccessJson ...");
-            tl.setVariable("azureAdApplicationResourceAccessJson", permissionJson);
-            
-            pwsh.dispose();
-        }).catch(function(err){
-            console.log(err);
-            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed 2');
-            pwsh.dispose();
-        });
+
 } catch (err) {
     console.log(err);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');

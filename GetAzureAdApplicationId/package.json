@@ -10,7 +10,5 @@
   "license": "MIT",
   "dependencies": {
     "azure-pipelines-task-lib": "^2.8.0",
-    "node-powershell": "^3.3.1",
-    "node-powershellcore": "^1.0.0"
   }
 }
