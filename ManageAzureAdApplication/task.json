@@ -5,7 +5,7 @@
     "description": "Task to create/update Azure AD Application",
     "helpMarkDown": "",
     "category": "Utility",
-    "preview": false,
+    "preview": true,
     "author": "Solutions Experta Inc.",
     "version": {
         "Major": 0,
