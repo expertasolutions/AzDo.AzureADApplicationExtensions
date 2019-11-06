@@ -9,6 +9,6 @@
   "author": "Solutions Experta Inc.",
   "license": "MIT",
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.8.0",
+    "azure-pipelines-task-lib": "^2.8.0"
   }
 }
