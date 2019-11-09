@@ -1,6 +1,7 @@
+# Summary
 Tasks packages to manage Azure AD Application from Azure DevOps release pipeline.
 
-Available tasks:
+## Available tasks:
 - GetAzureAdApplicationId
 	- Get the Azure Ad Application id from the specified app name
 - ManageAzureAdApplication
