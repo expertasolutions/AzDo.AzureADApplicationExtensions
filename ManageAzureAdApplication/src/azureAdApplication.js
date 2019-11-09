@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 
 var tl = require('azure-pipelines-task-lib');
-var shell = require('node-powershell');
 var os = require('os');
 var path = require('path');
 var fs = require('fs');
@@ -48,39 +47,7 @@ try {
     tl.checkPath(tempDirectory, `${tempDirectory} (agent.tempDirectory)`);
     var filePath = path.join(tempDirectory, uuidV4() + '.json');
     fs.writeFile(filePath, requiredResource, { encoding: 'utf8' });
-    
-    var pwsh = new shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-    });
-    
-    pwsh.addCommand(__dirname  + "/createAzureApp.ps1 -subscriptionId '" + subcriptionId + "'"
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
-        + " -applicationName '" + applicationName + "'"
-        + " -rootDomain '" + rootDomain + "' -applicationSecret '" + applicationSecret + "'"
-        + " -manifestFile '" + filePath + "' -homeUrl '" + homeUrl + "' -replyUrls '" + replyUrls + "' -ownerId '" + ownerId + "'")
-        .then(function() {
-            return pwsh.invoke();
-        }).then(function(output){
-            console.log(output);
-            var regx = "(Azure ApplicationID): ([A-Za-z0-9\\-]*)";
-            var result = output.match(regx);
-            var appId = result[2];
-            tl.setVariable("azureAdApplicationId", appId);
-            pwsh.dispose();
-        }).catch(function(err){
-            console.log(err);
-            var regx = "(Azure ApplicationID): ([A-Za-z0-9\\-]*)";
-            var result = err.match(regx);
-            if(result != null) {
-                var appId = result[2];
-                tl.setVariable("azureAdApplicationId", appId);
-            } else {
-                console.log("not application id returned");
-                tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
-            }
-            pwsh.dispose();
-        });
+
 } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
