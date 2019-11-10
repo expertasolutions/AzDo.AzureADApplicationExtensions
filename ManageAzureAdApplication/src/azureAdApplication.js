@@ -102,6 +102,7 @@ try {
                             // Grant application permissions
                             var permission = {
                                 body: {
+                                    clientId: servicePrincipalId,
                                     resourceId: applicationCreateResult.appId,
                                     objectId: rAccess.id
                                 }
