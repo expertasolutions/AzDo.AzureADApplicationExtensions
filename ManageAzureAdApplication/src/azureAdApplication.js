@@ -94,23 +94,12 @@ try {
                     value: applicationSecret,
                 }]
 
-                console.log(taskReplyUrls);
-                var rp = JSON.parse(taskReplyUrls);
-                console.log(rp);
-
-                console.log("--- required resources ---");
-                console.log("");
-                console.log(requiredResource);
-                var rq = JSON.parse(requiredResource);
-                console.log("");
-                console.log(rq);
-                
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls: rp,
-                    requiredResourceAccess: rq
+                    replyUrls: JSON.parse(taskReplyUrls),
+                    requiredResourceAccess: JSON.parse(requiredResource)
                 };
 
                 console.log("---------------------------------------------");
@@ -143,6 +132,7 @@ try {
                         console.log("");
                         console.log("---------------------------------------------");
                         console.log("Service Principal creation result:");
+                        console.log("");
                         console.log(serviceCreateResult);
                         console.log("");
                         console.log("---------------------------------------------");
@@ -151,17 +141,9 @@ try {
                             identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                         };
                         graphClient.applications.patch(applicationCreateResult.objectId, appUpdateParm)
-                        .then(appUpdateResult => {
-                            console.log("");
-                            console.log("AppUpdateResult: ");
-                            console.log("");
-                            console.log("---------------------------------------------");
-                            console.log(appUpdateResult);
-                        }).catch(err => {
+                        .catch(err => {
                             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                         });
-                        
-
                     }).catch(err => {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
@@ -169,10 +151,14 @@ try {
                     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                 })
             } else {
-                console.log("application found");
-                azureApplicationId = appObject.appId;
+                console.log("-----------------------");
+                console.log("");
+                console.log("Application found");
+                console.log("");
+                console.log("-----------------------");
+                console.log("");
+                console.log(appObject);
             }
-
         }).catch(err=> {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
         });

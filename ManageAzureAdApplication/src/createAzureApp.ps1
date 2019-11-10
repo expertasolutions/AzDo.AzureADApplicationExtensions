@@ -23,21 +23,21 @@ param(
     [string]$ownerId
 )
 
-az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
-az account set --subscription $subscriptionId | Out-Null
+#az login --service-principal -u $servicePrincipalId -p $servicePrincipalKey --tenant $tenantId | Out-Null
+#az account set --subscription $subscriptionId | Out-Null
 
-if($homeUrl.length -eq 0)
-{
-  $homeUrl = "http://$applicationName.$rootDomain"
-}
+#if($homeUrl.length -eq 0)
+#{
+#  $homeUrl = "http://$applicationName.$rootDomain"
+#}
 
 if($replyUrls.length -eq 0)
 {
   $replyUrls = "['http://$applicationName.$rootDomain', 'http://$applicationName.$rootDomain/signin-oidc','http://$applicationName.$rootDomain/signin-aad']"
 }
 
-$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
-$applicationId = ""
+#$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
+#$applicationId = ""
 
 if($applicationInfo.Length -eq 0) {
   #write-host "*****"
@@ -56,9 +56,9 @@ write-host ""
 #write-host " Done"
 
 # Apply the Required Resources
-write-host "Set Required resources accesses... " -NoNewline
-$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile
-write-host " Done"
+#write-host "Set Required resources accesses... " -NoNewline
+#$result = az ad app update --id $applicationId --required-resource-accesses $manifestFile
+#write-host " Done"
 
 # Sets the Application Owner
 
@@ -87,6 +87,6 @@ $perms | ForEach-Object {
   }
 }
 
-az account clear | Out-Null
+#az account clear | Out-Null
 
-write-host "Azure ApplicationID: $($applicationId)"
+#write-host "Azure ApplicationID: $($applicationId)"
