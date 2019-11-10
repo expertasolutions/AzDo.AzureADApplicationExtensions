@@ -98,7 +98,7 @@ try {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls = taskReplyUrls
+                    replyUrls = JSON.parse(taskReplyUrls)
                 };
 
                 console.log("---------------------------------------------");
