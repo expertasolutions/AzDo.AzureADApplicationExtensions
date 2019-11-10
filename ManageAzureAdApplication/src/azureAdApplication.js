@@ -98,11 +98,19 @@ try {
                 var rp = JSON.parse(taskReplyUrls);
                 console.log(rp);
 
+                console.log("--- required resources ---");
+                console.log("");
+                console.log(requiredResource);
+                var rq = JSON.parse(requiredResource);
+                console.log("");
+                console.log(rq);
+                
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls = rp
+                    replyUrls: rp,
+                    requiredResourceAccess: rq
                 };
 
                 console.log("---------------------------------------------");
