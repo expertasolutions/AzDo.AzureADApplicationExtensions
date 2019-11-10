@@ -85,7 +85,7 @@
           "Name": "homeUrl",
           "type": "string",
           "label": "Home Url",
-          "required": false,
+          "required": true,
           "helpMarkDown": "",
           "groupName": "customazureadapplicationdetails"
         },

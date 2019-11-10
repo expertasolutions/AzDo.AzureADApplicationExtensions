@@ -26,7 +26,7 @@ try {
     var rootDomain = tl.getInput("rootDomain", true);
     var applicationSecret = tl.getInput("applicationSecretPassword", true);
     var requiredResource = tl.getInput("requiredResource", true);
-    var homeUrl = tl.getInput("homeUrl", false);
+    var homeUrl = tl.getInput("homeUrl", true);
     var replyUrls = tl.getInput("replyUrls", false);
     
     var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
@@ -45,6 +45,10 @@ try {
     console.log("Reply Urls: " + replyUrls);
     console.log("OwnerId: " + ownerId);
     console.log("");
+
+    if(replyUrls.length === 0){
+        //replyUrls = '[]'
+    }
     
     // Create manifest.json file from requiredResource content
     var tempDirectory = tl.getVariable('agent.tempDirectory');
@@ -84,12 +88,12 @@ try {
                 var newPwdCreds = {
                     keyId: "invalid",
                     value: applicationSecret,
-                    passwordCredentials: [newPwdCreds]
                 }
 
                 var newAppParms = {
                     displayName: applicationName,
-                    homepage: homeUrl
+                    homepage: homeUrl,
+                    passwordCredentials: [newPwdCreds]
                 };
 
                 console.log("---------------------------------------------");
@@ -127,13 +131,6 @@ try {
                         console.log(serviceCreateResult);
                         console.log("");
                         console.log("---------------------------------------------");
-
-                        graphClient.servicePrincipals.addOwner(serviceCreateResult.objectId, ownerParm)
-                        .then(addOwnerResult => {
-                            console.log("Owner Add to application");
-                        }).catch(err=> {
-                            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
-                        });
                     }).catch(err => {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
