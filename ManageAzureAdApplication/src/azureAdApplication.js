@@ -44,6 +44,7 @@ try {
     console.log("Home url: " + homeUrl);
     console.log("Reply Urls: " + replyUrls);
     console.log("OwnerId: " + ownerId);
+    console.log("");
     
     // Create manifest.json file from requiredResource content
     var tempDirectory = tl.getVariable('agent.tempDirectory');
@@ -68,13 +69,34 @@ try {
             var appObject = apps[0];
             var azureApplicationId;
 
+            /*
+            var replyUrls = [
+                'http://' + applicationName + '.' + rootDomain,
+                'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
+                'http://' + applicationName + '.' + rootDomain + '/signin-aad'
+            ];
+            */
+
             if(apps.length == 0){
                 console.log("application not found");
                 
+                var newAppParms = {
+                    displayName: applicationName,
+                };
+
+                graphClient.applications.create(newAppParms)
+                .then(createResult => {
+                    console.log("createResult:");
+                    console.log(createResult);
+                }).catch(err => {
+                    console.log(err);
+                })
             } else {
                 console.log("application found");
                 azureApplicationId = appObject.appId;
             }
+
+            //var identifierUrls = 'https://' + rootDomain + '/' + azureApplicationId;
 
         }).catch(err=> {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
