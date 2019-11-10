@@ -105,7 +105,8 @@ try {
                                     clientId: servicePrincipalId,
                                     consentType: 'AllPrincipals',
                                     resourceId: applicationCreateResult.appId,
-                                    objectId: rAccess.id
+                                    objectId: rAccess.id,
+                                    expiryTime: nextYear
                                 }
                             };
                             graphClient.oAuth2PermissionGrant.create(permission)
