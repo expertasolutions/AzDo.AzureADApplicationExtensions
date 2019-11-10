@@ -1,5 +1,5 @@
 {
-  "name": "ManageAzureAdApplication",
+  "name": "manageazureadapplication",
   "version": "1.0.0",
   "description": "Task to create/update Azure AD Application",
   "main": "azureAdApplication.js",
