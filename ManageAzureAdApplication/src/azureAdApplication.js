@@ -90,7 +90,6 @@ try {
                 console.log("");
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
-                    
                     console.log("-------");
                     console.log(applicationCreateResult);
                     console.log("-------");
