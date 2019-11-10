@@ -81,6 +81,12 @@ try {
             if(apps.length == 0){
                 console.log("application not found");
                 
+                var newPwdCreds = {
+                    keyId: "invalid",
+                    value: applicationSecret,
+                    passwordCredentials: [newPwdCreds]
+                }
+
                 var newAppParms = {
                     displayName: applicationName,
                 };
@@ -97,15 +103,9 @@ try {
                     console.log("");
                     console.log("Create Application Service principal ...");
 
-                    var newPwdCreds = {
-                        keyId: "invalid",
-                        value: applicationSecret
-                    }
-
                     var serviceParms = {
                         displayName: applicationName,
                         appId: applicationCreateResult.appId,
-                        passwordCredentials: [newPwdCreds]
                     };
 
                     var ownerParm = {

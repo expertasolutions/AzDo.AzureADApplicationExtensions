@@ -79,9 +79,9 @@ write-host " Done"
 $ownerList = (az ad app owner list --id $applicationId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
 if ($ownerList.length -eq 0)
 {
-  write-host "Set Application Owner..." -NoNewline
-  az ad app owner add --id $applicationId --owner-object-id $ownerId
-  write-host " Done"
+#  write-host "Set Application Owner..." -NoNewline
+#  az ad app owner add --id $applicationId --owner-object-id $ownerId
+#  write-host " Done"
 }
 
 #Granting Permission to service principal
