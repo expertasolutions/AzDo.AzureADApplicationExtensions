@@ -27,7 +27,7 @@ try {
     var applicationSecret = tl.getInput("applicationSecretPassword", true);
     var requiredResource = tl.getInput("requiredResource", true);
     var homeUrl = tl.getInput("homeUrl", true);
-    var replyUrls = tl.getInput("replyUrls", false);
+    var taskReplyUrls = tl.getInput("replyUrls", false);
     
     var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
 
@@ -42,11 +42,11 @@ try {
     console.log("Application Name: " + applicationName);
     console.log("Root Domain: " + rootDomain);
     console.log("Home url: " + homeUrl);
-    console.log("Reply Urls: " + replyUrls);
+    console.log("Reply Urls: " + taskReplyUrls);
     console.log("OwnerId: " + ownerId);
     console.log("");
 
-    if(replyUrls.length === 0){
+    if(taskReplyUrls.length === 0){
         //replyUrls = '[]'
     }
     
@@ -75,7 +75,7 @@ try {
             var servicePrincipalId;
 
             /*
-            var replyUrls = [
+            var taskReplyUrls = [
                 'http://' + applicationName + '.' + rootDomain,
                 'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
                 'http://' + applicationName + '.' + rootDomain + '/signin-aad'
@@ -91,7 +91,6 @@ try {
                 // Use UpdatePasswordCredentials
                 var newPwdCreds = [{
                     endDate: nextYear,
-                    //keyId: uuidV4(),
                     value: applicationSecret,
                 }]
 
@@ -99,6 +98,7 @@ try {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
+                    replyUrls = taskReplyUrls
                 };
 
                 console.log("---------------------------------------------");
@@ -122,9 +122,7 @@ try {
                         url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
                     };
                     graphClient.applications.addOwner(applicationCreateResult.objectId, ownerParm)
-                    .then(addOwnerResult => {
-                        console.log("Owner Add to application");
-                    }).catch(err=> {
+                    .catch(err=> {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
 
@@ -143,7 +141,6 @@ try {
                         graphClient.applications.patch(applicationCreateResult.objectId, appUpdateParm)
                         .then(appUpdateResult => {
                             console.log("");
-                            console.log("---------------------------------------------");
                             console.log("AppUpdateResult: ");
                             console.log("");
                             console.log("---------------------------------------------");
