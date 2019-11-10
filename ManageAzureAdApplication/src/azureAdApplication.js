@@ -94,28 +94,6 @@ try {
                     console.log(applicationCreateResult);
                     console.log("-------");
 
-                    for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
-                        var rqAccess = applicationCreateResult.requiredResourceAccess[i];
-                        for(var j=0;j<rqAccess.resourceAccess.length;j++){
-                            var rAccess = rqAccess.resourceAccess[j];
-                            console.log("   " + rAccess.id);
-                            // Grant application permissions
-                            var permission = {
-                                body: {
-                                    clientId: servicePrincipalId,
-                                    consentType: 'AllPrincipals',
-                                    resourceId: applicationCreateResult.appId,
-                                    objectId: rAccess.id,
-                                    expiryTime: nextYear
-                                }
-                            };
-                            graphClient.oAuth2PermissionGrant.create(permission)
-                            .catch(err => {
-                                tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
-                            });
-                        }
-                    }
-                    
                     var serviceParms = {
                         displayName: applicationName,
                         appId: applicationCreateResult.appId,
@@ -134,6 +112,33 @@ try {
                     console.log("Creating Application Service Principal ...");
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
+
+                        console.log(serviceCreateResult);
+
+                        for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
+                            var rqAccess = applicationCreateResult.requiredResourceAccess[i];
+                            for(var j=0;j<rqAccess.resourceAccess.length;j++){
+                                var rAccess = rqAccess.resourceAccess[j];
+                                console.log("   " + rAccess.id);
+                                // Grant application permissions
+                                var permission = {
+                                    body: {
+                                        clientId: servicePrincipalId,
+                                        //consentType: 'AllPrincipals',
+                                        consentType: 'Principal',
+                                        principalId: serviceCreateResult.objectId,
+                                        resourceId: applicationCreateResult.appId,
+                                        objectId: rAccess.id,
+                                        //expiryTime: nextYear
+                                    }
+                                };
+                                graphClient.oAuth2PermissionGrant.create(permission)
+                                .catch(err => {
+                                    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                                });
+                            }
+                        }
+
                         var appUpdateParm = {
                             identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                         };
