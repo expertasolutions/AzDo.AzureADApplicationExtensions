@@ -9,12 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 
-var tl = require('azure-pipelines-task-lib');
-var os = require('os');
-var path = require('path');
-var fs = require('fs');
-var uuidV4 = require('uuid/v4');
-
+const tl = require('azure-pipelines-task-lib');
 const msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 const azureGraph = require('@azure/graph');
 
@@ -46,16 +41,6 @@ try {
     console.log("OwnerId: " + ownerId);
     console.log("");
 
-    if(taskReplyUrls.length === 0){
-        //replyUrls = '[]'
-    }
-    
-    // Create manifest.json file from requiredResource content
-    var tempDirectory = tl.getVariable('agent.tempDirectory');
-    tl.checkPath(tempDirectory, `${tempDirectory} (agent.tempDirectory)`);
-    var filePath = path.join(tempDirectory, uuidV4() + '.json');
-    fs.writeFile(filePath, requiredResource, { encoding: 'utf8' });
-
     msRestNodeAuth.loginWithServicePrincipalSecret(
         servicePrincipalId, servicePrincipalKey, tenantId
     ).then(creds => {
@@ -74,46 +59,41 @@ try {
             var azureApplicationId;
             var servicePrincipalId;
 
-            /*
-            var taskReplyUrls = [
-                'http://' + applicationName + '.' + rootDomain,
-                'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
-                'http://' + applicationName + '.' + rootDomain + '/signin-aad'
-            ];
-            */
-
             var now = new Date();
             const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
 
+            // Use UpdatePasswordCredentials
+            var newPwdCreds = [{
+                endDate: nextYear,
+                value: applicationSecret,
+            }]
+
             if(apps.length == 0){
-                console.log("application not found");
-                
-                // Use UpdatePasswordCredentials
-                var newPwdCreds = [{
-                    endDate: nextYear,
-                    value: applicationSecret,
-                }]
+                Console.log("Creating new Azure Active Directory application...");
+                var taskReplyUrls;
+                if(taskReplyUrls.length === 0){
+                    taskReplyUrls = [
+                        'http://' + applicationName + '.' + rootDomain,
+                        'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
+                        'http://' + applicationName + '.' + rootDomain + '/signin-aad'
+                    ];
+                } else {
+                    taskReplyUrls = JSON.parse(taskReplyUrls);
+                }
 
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls: JSON.parse(taskReplyUrls),
+                    replyUrls: taskReplyUrls,
                     requiredResourceAccess: JSON.parse(requiredResource)
                 };
 
                 console.log("---------------------------------------------");
                 console.log("");
-                console.log("Creating new application name " + applicationName + " ...");
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
-                    console.log("");
-                    console.log("---------------------------------------------");
-                    console.log(applicationCreateResult);
-                    console.log("---------------------------------------------");
-                    console.log("");
-                    console.log("Create Application Service principal ...");
-
+                    
                     var serviceParms = {
                         displayName: applicationName,
                         appId: applicationCreateResult.appId,
@@ -122,21 +102,16 @@ try {
                     var ownerParm = {
                         url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
                     };
+
+                    console.log("Adding owner to Azure Active Directory Application ...");
                     graphClient.applications.addOwner(applicationCreateResult.objectId, ownerParm)
                     .catch(err=> {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
 
+                    console.log("Creating Application Service Principal ...");
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
-                        console.log("");
-                        console.log("---------------------------------------------");
-                        console.log("Service Principal creation result:");
-                        console.log("");
-                        console.log(serviceCreateResult);
-                        console.log("");
-                        console.log("---------------------------------------------");
-
                         var appUpdateParm = {
                             identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                         };
@@ -158,6 +133,31 @@ try {
                 console.log("-----------------------");
                 console.log("");
                 console.log(appObject);
+                
+                // Add expected owner
+                var ownerParm = {
+                    url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+                };
+                graphClient.applications.addOwner(applicationCreateResult.objectId, ownerParm)
+                .catch(err=> {
+                    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                });
+
+                // Update Azure AD application
+                var updateAppParms = {
+                    displayName: applicationName,
+                    homepage: homeUrl,
+                    passwordCredentials: newPwdCreds,
+                    replyUrls: taskReplyUrls,
+                    identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ],
+                    requiredResourceAccess: JSON.parse(requiredResource)
+                };
+
+                console.log("Updating Azure Active Directory application ...");
+                graphClient.applications.patch(applicationCreateResult.objectId, updateAppParms)
+                .catch(err=> {
+                    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                });
             }
         }).catch(err=> {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');

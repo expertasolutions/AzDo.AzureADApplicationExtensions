@@ -31,23 +31,23 @@ param(
 #  $homeUrl = "http://$applicationName.$rootDomain"
 #}
 
-if($replyUrls.length -eq 0)
-{
-  $replyUrls = "['http://$applicationName.$rootDomain', 'http://$applicationName.$rootDomain/signin-oidc','http://$applicationName.$rootDomain/signin-aad']"
-}
+#if($replyUrls.length -eq 0)
+#{
+#  $replyUrls = "['http://$applicationName.$rootDomain', 'http://$applicationName.$rootDomain/signin-oidc','http://$applicationName.$rootDomain/signin-aad']"
+#}
 
 #$applicationInfo = (az ad app list --filter "displayName eq '$applicationName'") | ConvertFrom-Json
 #$applicationId = ""
 
-if($applicationInfo.Length -eq 0) {
+#if($applicationInfo.Length -eq 0) {
   #write-host "*****"
   #$servicePrincipalResult = $(az ad sp create-for-rbac --name $applicationName --password $applicationSecret) | ConvertFrom-Json
   #write-host "*****"
   #$applicationId = $servicePrincipalResult.appId
-} else {
-  $applicationId = $applicationInfo.appId
-}
-write-host ""
+#} else {
+#  $applicationId = $applicationInfo.appId
+#}
+#write-host ""
 
 
 # Set the reply urls
@@ -62,13 +62,13 @@ write-host ""
 
 # Sets the Application Owner
 
-$ownerList = (az ad app owner list --id $applicationId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
-if ($ownerList.length -eq 0)
-{
+#$ownerList = (az ad app owner list --id $applicationId | ConvertFrom-Json) | Where-Object { $_.objectId -eq $ownerId }
+#if ($ownerList.length -eq 0)
+#{
 #  write-host "Set Application Owner..." -NoNewline
 #  az ad app owner add --id $applicationId --owner-object-id $ownerId
 #  write-host " Done"
-}
+#}
 
 #Granting Permission to service principal
 $perms = (az ad app permission list --id $applicationId) | ConvertFrom-Json
