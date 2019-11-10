@@ -83,7 +83,7 @@ try {
             */
 
             var now = new Date();
-            const nextYear = new Date(now.getFullYear(), now.getMonth(), now.getDay());
+            const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
 
             if(apps.length == 0){
                 console.log("application not found");
