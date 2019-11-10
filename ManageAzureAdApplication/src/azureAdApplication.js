@@ -140,7 +140,7 @@ try {
                         var appUpdateParm = {
                             identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                         };
-                        graphClient.applications.patch(applicationCreateResult.appId, appUpdateParm)
+                        graphClient.applications.patch(applicationCreateResult.objectId, appUpdateParm)
                         .then(appUpdateResult => {
                             console.log("");
                             console.log("---------------------------------------------");
