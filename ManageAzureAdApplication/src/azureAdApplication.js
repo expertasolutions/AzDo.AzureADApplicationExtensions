@@ -62,7 +62,7 @@ try {
             filter: appFilterValue 
         };
 
-        graphClient.list(appFilter)
+        graphClient.applications.list(appFilter)
         .then(apps => {
             
             var appObject = apps[0];
