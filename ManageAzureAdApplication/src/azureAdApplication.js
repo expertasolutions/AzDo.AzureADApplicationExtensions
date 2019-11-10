@@ -94,6 +94,24 @@ try {
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
                     
+                    for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
+                        var rqAccess = applicationCreateResult.requiredResourceAccess[i];
+                        console.log(rqAccess.resourceAppId);
+                        for(var j=0;j<rqAccess.resourceAccess.length;j++){
+                            var rAccess = rqAccess[j];
+                            console.log("   " + rAccess.id);
+                            // Grant application permissions
+                            var permission = {
+                                appId: applicationCreateResult.appId,
+                                objectId: rAccess.id
+                            };
+                            graphClient.oAuth2PermissionGrant.create(permission)
+                            .catch(err => {
+                                tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                            });
+                        }
+                    }
+                    
                     var serviceParms = {
                         displayName: applicationName,
                         appId: applicationCreateResult.appId,
@@ -138,7 +156,7 @@ try {
                 var ownerParm = {
                     url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
                 };
-                graphClient.applications.addOwner(applicationCreateResult.objectId, ownerParm)
+                graphClient.applications.addOwner(appObject.objectId, ownerParm)
                 .catch(err=> {
                     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                 });
@@ -149,12 +167,12 @@ try {
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
                     replyUrls: taskReplyUrls,
-                    identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ],
+                    identifierUris: [ 'https://' + rootDomain + '/' + appObject.appId ],
                     requiredResourceAccess: JSON.parse(requiredResource)
                 };
 
                 console.log("Updating Azure Active Directory application ...");
-                graphClient.applications.patch(applicationCreateResult.objectId, updateAppParms)
+                graphClient.applications.patch(appObject.objectId, updateAppParms)
                 .catch(err=> {
                     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                 });
