@@ -94,11 +94,15 @@ try {
                     value: applicationSecret,
                 }]
 
+                console.log(taskReplyUrls);
+                var rp = JSON.parse(taskReplyUrls);
+                console.log(rp);
+
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls = JSON.parse(taskReplyUrls)
+                    replyUrls = rp
                 };
 
                 console.log("---------------------------------------------");
