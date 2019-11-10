@@ -97,8 +97,8 @@ try {
 
                 var newAppParms = {
                     displayName: applicationName,
-                    homepage: homeUrl,
-                    passwordCredentials: newPwdCreds,
+                    homepage: homeUrl
+                    //passwordCredentials: newPwdCreds,
                 };
 
                 console.log("---------------------------------------------");
