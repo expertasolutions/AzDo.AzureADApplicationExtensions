@@ -90,15 +90,15 @@ try {
                 
                 // Use UpdatePasswordCredentials
                 var newPwdCreds = [{
-                    keyId: uuidV4(),
+                    endDate: nextYear,
+                    //keyId: uuidV4(),
                     value: applicationSecret,
-                    endDate: nextYear
                 }]
 
                 var newAppParms = {
                     displayName: applicationName,
-                    homepage: homeUrl
-                    //passwordCredentials: newPwdCreds,
+                    homepage: homeUrl,
+                    passwordCredentials: newPwdCreds,
                 };
 
                 console.log("---------------------------------------------");
