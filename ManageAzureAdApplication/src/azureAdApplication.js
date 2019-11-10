@@ -82,6 +82,9 @@ try {
             ];
             */
 
+            var now = new Date();
+            var nextYear = new Date(now.getFullYear(), now.getMonth(), now.getDay());
+
             if(apps.length == 0){
                 console.log("application not found");
                 
@@ -89,6 +92,7 @@ try {
                 var newPwdCreds = [{
                     keyId: uuidV4(),
                     value: applicationSecret,
+                    endDate: nextYear
                 }]
 
                 var newAppParms = {
