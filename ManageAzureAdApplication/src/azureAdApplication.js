@@ -98,7 +98,7 @@ try {
                     for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
                         var rqAccess = applicationCreateResult.requiredResourceAccess[i];
                         for(var j=0;j<rqAccess.resourceAccess.length;j++){
-                            var rAccess = rAccess[j];
+                            var rAccess = rqAccess.resourceAccess[j];
                             console.log("   " + rAccess);
                             // Grant application permissions
                             var permission = {
