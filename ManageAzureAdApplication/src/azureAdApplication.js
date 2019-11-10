@@ -84,6 +84,7 @@ try {
                     displayName: applicationName,
                 };
 
+                console.log("Creating new application name " + applicationName + " ...");
                 graphClient.applications.create(newAppParms)
                 .then(createResult => {
                     console.log("createResult:");
