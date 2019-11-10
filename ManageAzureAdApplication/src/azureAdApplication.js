@@ -97,7 +97,6 @@ try {
 
                     for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
                         var rqAccess = applicationCreateResult.requiredResourceAccess[i];
-                        console.log(rqAccess);
                         for(var j=0;j<rqAccess.resourceAccess.length;j++){
                             var rAccess = rAccess[j];
                             console.log("   " + rAccess);
