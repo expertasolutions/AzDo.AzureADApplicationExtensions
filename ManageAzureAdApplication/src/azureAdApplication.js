@@ -69,7 +69,7 @@ try {
             }]
 
             if(apps.length == 0){
-                Console.log("Creating new Azure Active Directory application...");
+                console.log("Creating new Azure Active Directory application...");
                 var taskReplyUrls;
                 if(taskReplyUrls.length === 0){
                     taskReplyUrls = [
