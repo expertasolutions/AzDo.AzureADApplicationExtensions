@@ -15,6 +15,9 @@ var path = require('path');
 var fs = require('fs');
 var uuidV4 = require('uuid/v4');
 
+const msRestNodeAuth = require('@azure/ms-rest-nodeauth');
+const azureGraph = require('@azure/graph');
+
 try {
     
     var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
@@ -48,6 +51,35 @@ try {
     var filePath = path.join(tempDirectory, uuidV4() + '.json');
     fs.writeFile(filePath, requiredResource, { encoding: 'utf8' });
 
+    msRestNodeAuth.loginWithServicePrincipalSecret(
+        servicePrincipalId, servicePrincipalKey, tenantId
+    ).then(creds => {
+        var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
+        var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+        
+        var appFilterValue = "displayName eq '" + applicationName + "'"
+        var appFilter = {
+            filter: appFilterValue 
+        };
+
+        graphClient.list(appFilter)
+        .then(apps => {
+            
+            var appObject = apps[0];
+            var azureApplicationId;
+
+            if(apps.length == 0){
+                
+            } else {
+                azureApplicationId = appObject.appId;
+            }
+            
+        }).catch(err=> {
+            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+        });
+    }).catch(err=> {
+        tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+    });
 } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
