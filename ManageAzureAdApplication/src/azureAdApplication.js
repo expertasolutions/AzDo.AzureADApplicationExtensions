@@ -101,8 +101,10 @@ try {
                             console.log("   " + rAccess.id);
                             // Grant application permissions
                             var permission = {
-                                appId: applicationCreateResult.appId,
-                                objectId: rAccess.id
+                                body: {
+                                    appId: applicationCreateResult.appId,
+                                    objectId: rAccess.id
+                                }
                             };
                             graphClient.oAuth2PermissionGrant.create(permission)
                             .catch(err => {
