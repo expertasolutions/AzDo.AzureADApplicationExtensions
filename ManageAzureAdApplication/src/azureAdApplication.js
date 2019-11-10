@@ -67,22 +67,22 @@ try {
 
             if(apps.length == 0){
                 console.log("Creating new Azure Active Directory application...");
-                var taskReplyUrls;
+                var taskUrlArray;
                 if(taskReplyUrls.length === 0){
-                    taskReplyUrls = [
+                    taskUrlArray = [
                         'http://' + applicationName + '.' + rootDomain,
                         'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
                         'http://' + applicationName + '.' + rootDomain + '/signin-aad'
                     ];
                 } else {
-                    taskReplyUrls = JSON.parse(taskReplyUrls);
+                    taskUrlArray = JSON.parse(taskReplyUrls);
                 }
 
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
                     passwordCredentials: newPwdCreds,
-                    replyUrls: taskReplyUrls,
+                    replyUrls: taskUrlArray,
                     requiredResourceAccess: JSON.parse(requiredResource)
                 };
 
