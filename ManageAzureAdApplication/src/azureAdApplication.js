@@ -54,10 +54,7 @@ try {
 
         graphClient.applications.list(appFilter)
         .then(apps => {
-            
             var appObject = apps[0];
-            var azureApplicationId;
-            var servicePrincipalId;
 
             var now = new Date();
             const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
@@ -94,6 +91,10 @@ try {
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
                     
+                    console.log("-------");
+                    console.log(applicationCreateResult);
+                    console.log("-------");
+
                     for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
                         var rqAccess = applicationCreateResult.requiredResourceAccess[i];
                         console.log(rqAccess.resourceAppId);
