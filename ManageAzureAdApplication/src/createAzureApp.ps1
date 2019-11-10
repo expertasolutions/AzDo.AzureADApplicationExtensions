@@ -50,9 +50,9 @@ if($applicationInfo.Length -eq 0) {
 write-host ""
 
 # Set the IdentifierUris
-write-host "Set IdentifierUris... " -NoNewline
-$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']"
-write-host " Done"
+#write-host "Set IdentifierUris... " -NoNewline
+#$result = az ad app update --id $applicationId --set identifierUris="['https://$rootDomain/$($applicationId)']"
+#write-host " Done"
 
 # Set the homepage url
 #write-host "Set homepage url... " -NoNewline
@@ -65,9 +65,9 @@ $result = az ad app update --id $applicationId --set replyUrls=$($replyUrls.repl
 write-host " Done"
 
 # Reset the Application Password
-write-host "Set application password... " -NoNewline
-$result = az ad app update --id $applicationId --password $applicationSecret
-write-host " Done"
+#write-host "Set application password... " -NoNewline
+#$result = az ad app update --id $applicationId --password $applicationSecret
+#write-host " Done"
 
 # Apply the Required Resources
 write-host "Set Required resources accesses... " -NoNewline

@@ -85,15 +85,16 @@ try {
             if(apps.length == 0){
                 console.log("application not found");
                 
-                var newPwdCreds = {
-                    keyId: "invalid",
+                // Use UpdatePasswordCredentials
+                var newPwdCreds = [{
+                    keyId: uuidV4(),
                     value: applicationSecret,
-                }
+                }]
 
                 var newAppParms = {
                     displayName: applicationName,
                     homepage: homeUrl,
-                    passwordCredentials: [newPwdCreds]
+                    passwordCredentials: newPwdCreds,
                 };
 
                 console.log("---------------------------------------------");
@@ -131,6 +132,23 @@ try {
                         console.log(serviceCreateResult);
                         console.log("");
                         console.log("---------------------------------------------");
+
+                        var appUpdateParm = new {
+                            identifierUris = [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
+                        };
+                        graphClient.applications.patch(applicationCreateResult.appId, appUpdateParm)
+                        .then(appUpdateResult => {
+                            console.log("");
+                            console.log("---------------------------------------------");
+                            console.log("AppUpdateResult: ");
+                            console.log("");
+                            console.log("---------------------------------------------");
+                            console.log(appUpdateResult);
+                        }).catch(err => {
+                            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                        });
+                        
+
                     }).catch(err => {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
