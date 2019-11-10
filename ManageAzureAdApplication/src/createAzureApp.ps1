@@ -55,9 +55,9 @@ $result = az ad app update --id $applicationId --set identifierUris="['https://$
 write-host " Done"
 
 # Set the homepage url
-write-host "Set homepage url... " -NoNewline
-$result = az ad app update --id $applicationId --set homepage="$homeUrl"
-write-host " Done"
+#write-host "Set homepage url... " -NoNewline
+#$result = az ad app update --id $applicationId --set homepage="$homeUrl"
+#write-host " Done"
 
 # Set the reply urls
 write-host "Set Reply urls... " -NoNewline

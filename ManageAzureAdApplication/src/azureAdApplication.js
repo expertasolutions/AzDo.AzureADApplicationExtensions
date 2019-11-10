@@ -89,6 +89,7 @@ try {
 
                 var newAppParms = {
                     displayName: applicationName,
+                    homepage: homeUrl
                 };
 
                 console.log("---------------------------------------------");
