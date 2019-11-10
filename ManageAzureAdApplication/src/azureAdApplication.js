@@ -103,6 +103,7 @@ try {
                             var permission = {
                                 body: {
                                     clientId: servicePrincipalId,
+                                    consentType: 'Principal',
                                     resourceId: applicationCreateResult.appId,
                                     objectId: rAccess.id
                                 }
