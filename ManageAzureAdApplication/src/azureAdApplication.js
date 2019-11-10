@@ -85,20 +85,39 @@ try {
                     displayName: applicationName,
                 };
 
+                console.log("---------------------------------------------");
+                console.log("");
                 console.log("Creating new application name " + applicationName + " ...");
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
+                    console.log("");
                     console.log("---------------------------------------------");
-                    console.log("applicationCreateResult:");
                     console.log(applicationCreateResult);
                     console.log("---------------------------------------------");
                     console.log("");
                     console.log("Create Application Service principal ...");
 
+                    var newPwdCreds = {
+                        keyId: "invalid",
+                        value: applicationSecret
+                    }
+
                     var serviceParms = {
                         displayName: applicationName,
-                        appId: applicationCreateResult.appId
+                        appId: applicationCreateResult.appId,
+                        passwordCredentials: [newPwdCreds]
                     };
+
+                    var ownerParm = {
+                        url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+                    };
+                    graphClient.applications.addOwner(applicationCreateResult.objectId, ownerParm)
+                    .then(addOwnerResult => {
+                        console.log("Owner Add to application");
+                    }).catch(err=> {
+                        tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                    });
+
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
                         console.log("");
@@ -107,6 +126,13 @@ try {
                         console.log(serviceCreateResult);
                         console.log("");
                         console.log("---------------------------------------------");
+
+                        graphClient.servicePrincipals.addOwner(serviceCreateResult.objectId, ownerParm)
+                        .then(addOwnerResult => {
+                            console.log("Owner Add to application");
+                        }).catch(err=> {
+                            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                        });
                     }).catch(err => {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
@@ -117,8 +143,6 @@ try {
                 console.log("application found");
                 azureApplicationId = appObject.appId;
             }
-
-            //var identifierUrls = 'https://' + rootDomain + '/' + azureApplicationId;
 
         }).catch(err=> {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
