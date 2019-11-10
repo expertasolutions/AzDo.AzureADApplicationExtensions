@@ -68,6 +68,7 @@ try {
             
             var appObject = apps[0];
             var azureApplicationId;
+            var servicePrincipalId;
 
             /*
             var replyUrls = [
@@ -86,11 +87,31 @@ try {
 
                 console.log("Creating new application name " + applicationName + " ...");
                 graphClient.applications.create(newAppParms)
-                .then(createResult => {
-                    console.log("createResult:");
-                    console.log(createResult);
+                .then(applicationCreateResult => {
+                    console.log("---------------------------------------------");
+                    console.log("applicationCreateResult:");
+                    console.log(applicationCreateResult);
+                    console.log("---------------------------------------------");
+                    console.log("");
+                    console.log("Create Application Service principal ...");
+
+                    var serviceParms = {
+                        displayName: applicationName,
+                        appId: applicationCreateResult.appId
+                    };
+                    graphClient.servicePrincipals.create(serviceParms)
+                    .then(serviceCreateResult => {
+                        console.log("");
+                        console.log("---------------------------------------------");
+                        console.log("Service Principal creation result:");
+                        console.log(serviceCreateResult);
+                        console.log("");
+                        console.log("---------------------------------------------");
+                    }).catch(err => {
+                        tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                    });
                 }).catch(err => {
-                    console.log(err);
+                    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                 })
             } else {
                 console.log("application found");
