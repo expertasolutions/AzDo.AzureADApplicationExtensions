@@ -102,7 +102,7 @@ try {
                             // Grant application permissions
                             var permission = {
                                 body: {
-                                    appId: applicationCreateResult.appId,
+                                    resourceId: applicationCreateResult.appId,
                                     objectId: rAccess.id
                                 }
                             };
