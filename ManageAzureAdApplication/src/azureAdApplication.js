@@ -70,6 +70,7 @@ try {
 
             if(apps.length == 0){
                 console.log("application not found");
+                
             } else {
                 console.log("application found");
                 azureApplicationId = appObject.appId;
