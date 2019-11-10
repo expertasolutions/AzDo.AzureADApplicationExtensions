@@ -98,7 +98,7 @@ try {
                         var rqAccess = applicationCreateResult.requiredResourceAccess[i];
                         for(var j=0;j<rqAccess.resourceAccess.length;j++){
                             var rAccess = rqAccess.resourceAccess[j];
-                            console.log("   " + rAccess);
+                            console.log("   " + rAccess.id);
                             // Grant application permissions
                             var permission = {
                                 appId: applicationCreateResult.appId,
