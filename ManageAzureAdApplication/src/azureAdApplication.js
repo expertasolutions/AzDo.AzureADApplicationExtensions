@@ -129,7 +129,8 @@ try {
                                         principalId: serviceCreateResult.objectId,
                                         resourceId: applicationCreateResult.appId,
                                         objectId: rAccess.id,
-                                        startTime: nextYear.toISOString()
+                                        startTime: now.toISOString(),
+                                        expiryTime: nextYear.toISOString()
                                         //expiryTime: nextYear
                                     }
                                 };
