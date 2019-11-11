@@ -105,6 +105,7 @@ try {
                     console.log("Creating Application Service Principal ...");
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
+
                         var applicationServicePrincipalObjectId = serviceCreateResult.objectId;
                         for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++) {
                             var rqAccess = applicationCreateResult.requiredResourceAccess[i];
@@ -148,6 +149,9 @@ try {
                             identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                         };
                         graphClient.applications.patch(applicationCreateResult.objectId, appUpdateParm)
+                        .then(rs => {
+                            tl.setVariable("azureAdApplicationId", applicationCreateResult.appId);
+                        })
                         .catch(err => {
                             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                         });
