@@ -125,7 +125,7 @@ try {
                                     body: {
                                         clientId: servicePrincipalId,
                                         consentType: 'AllPrincipals',
-                                        resourceId: applicationCreateResult.appId,
+                                        resourceId: applicationCreateResult.objectId,
                                         objectId: rAccess.id,
                                         expiryTime: nextYear.toISOString()
                                     }
