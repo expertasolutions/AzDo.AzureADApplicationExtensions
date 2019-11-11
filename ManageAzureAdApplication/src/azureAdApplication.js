@@ -85,15 +85,8 @@ try {
                     replyUrls: taskUrlArray,
                     requiredResourceAccess: JSON.parse(requiredResource)
                 };
-
-                console.log("---------------------------------------------");
-                console.log("");
                 graphClient.applications.create(newAppParms)
                 .then(applicationCreateResult => {
-                    console.log("-------");
-                    console.log(applicationCreateResult);
-                    console.log("-------");
-
                     var serviceParms = {
                         displayName: applicationName,
                         appId: applicationCreateResult.appId,
@@ -112,12 +105,43 @@ try {
                     console.log("Creating Application Service Principal ...");
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
-                        for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
+                        var applicationServicePrincipalObjectId = serviceCreateResult.objectId;
+                        for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++) {
                             var rqAccess = applicationCreateResult.requiredResourceAccess[i];
-                            for(var j=0;j<rqAccess.resourceAccess.length;j++){
-                                var rAccess = rqAccess.resourceAccess[j];
-                                
-                            }
+                            var resourceAppFilter = {
+                                filter: "appId eq '" + rqAccess.resourceAppId + "'"
+                            };
+                            graphClient.servicePrincipals.list(resourceAppFilter)
+                            .then(rs => {
+                                var srv = rs[0];
+                                var desiredScope = "";
+                                for(var j=0;j<rqAccess.resourceAccess.length;j++){
+                                    var rAccess = rqAccess.resourceAccess[j];
+                                    var permission = srv.oauth2Permissions.find(p=> {
+                                        return p.id === rAccess.id;
+                                    });
+                                    desiredScope += permission.value + " ";
+                                }
+                                var permission = {
+                                    body: {
+                                        clientId: applicationServicePrincipalObjectId,
+                                        consentType: 'AllPrincipals',
+                                        scope: desiredScope,
+                                        resourceId: srv.objectId,
+                                        expiryTime: nextYear.toISOString()
+                                    }
+                                };
+
+                                graphClient.oAuth2PermissionGrant.create(permission)
+                                .then(p=> {
+                                    console.log("Permissions granted");
+                                }).catch(err => {
+                                    console.dir(err, {depth: null, colors: true});
+                                    tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                                });
+                            }).catch(err=> {
+                                tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+                            });
                         }
 
                         var appUpdateParm = {
