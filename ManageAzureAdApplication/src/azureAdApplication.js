@@ -113,8 +113,6 @@ try {
                     graphClient.servicePrincipals.create(serviceParms)
                     .then(serviceCreateResult => {
 
-                        console.log(serviceCreateResult);
-
                         for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++){
                             var rqAccess = applicationCreateResult.requiredResourceAccess[i];
                             for(var j=0;j<rqAccess.resourceAccess.length;j++){
@@ -125,8 +123,8 @@ try {
                                     body: {
                                         clientId: servicePrincipalId,
                                         consentType: 'AllPrincipals',
-                                        resourceId: applicationCreateResult.objectId,
-                                        objectId: rAccess.id,
+                                        objectId: applicationCreateResult.objectId,
+                                        resourceId: rAccess.id,
                                         expiryTime: nextYear.toISOString()
                                     }
                                 };
