@@ -124,14 +124,11 @@ try {
                                 var permission = {
                                     body: {
                                         clientId: servicePrincipalId,
-                                        //consentType: 'AllPrincipals',
-                                        consentType: 'Principal',
+                                        consentType: 'AllPrincipals',
                                         principalId: serviceCreateResult.objectId,
                                         resourceId: applicationCreateResult.appId,
                                         objectId: rAccess.id,
-                                        startTime: now.toISOString(),
                                         expiryTime: nextYear.toISOString()
-                                        //expiryTime: nextYear
                                     }
                                 };
                                 graphClient.oAuth2PermissionGrant.create(permission)
