@@ -106,7 +106,7 @@
     ],
     "execution": {
         "Node10": {
-          "target": "index.js",
+          "target": "index.js"
         }
       }
 }
