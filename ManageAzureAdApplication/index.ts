@@ -20,6 +20,10 @@ async function FindAzureAdApplication(applicationName, graphClient){
     }
 }
 
+async function FindServicePrincipalByAppId(appId, graphClient){
+    return null;
+}
+
 async function run() {
     try {
         
@@ -57,8 +61,13 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         var applicationInstance = FindAzureAdApplication(applicationName, graphClient);
-        console.log("applicationInstance");
-        console.log(applicationInstance);
+
+        if(applicationInstance == null){
+            console.log("Application not found");
+        } else {
+            console.log("Application found");
+            console.log(applicationInstance);
+        }
 
         /*
         msRestNodeAuth.loginWithServicePrincipalSecret(
