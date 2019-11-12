@@ -13,6 +13,11 @@ const tl = require('azure-pipelines-task-lib');
 const msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 const azureGraph = require('@azure/graph');
 
+async function myTest(){
+    
+    return "from my Test";
+}
+
 try {
     
     var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
@@ -41,6 +46,12 @@ try {
     console.log("OwnerId: " + ownerId);
     console.log("");
 
+    myTest().then(rs=> {
+        console.log("Result of myTest()");
+        console.log(rs);
+    })
+
+    /*
     msRestNodeAuth.loginWithServicePrincipalSecret(
         servicePrincipalId, servicePrincipalKey, tenantId
     ).then(creds => {
@@ -162,14 +173,7 @@ try {
                     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                 })
             } else {
-                console.log("-----------------------");
-                console.log("");
-                console.log("Application found");
-                console.log("");
-                console.log("-----------------------");
-                console.log("");
-                console.log(appObject);
-                
+
                 // Add expected owner
                 var ownerParm = {
                     url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
@@ -201,6 +205,7 @@ try {
     }).catch(err=> {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     });
+*/
 } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }
