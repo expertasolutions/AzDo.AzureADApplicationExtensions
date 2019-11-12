@@ -1,13 +1,23 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
+import { ServiceClientCredentials } from '@azure/ms-rest-js';
 
 async function LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 }
 
 async function FindAzureAdApplication(applicationName, graphClient){
-    
+    var appFilterValue = "displayName eq '" + applicationName + "'"
+    var appFilter = {
+        filter: appFilterValue 
+    };
+    var searchResults = await graphClient.applications.list(appFilter);
+    if(searchResults.length === 0){
+        return null;
+    } else {
+        return searchResults[0];
+    }
 }
 
 async function run() {
@@ -44,7 +54,11 @@ async function run() {
         console.log(azureCredentials);
 
         var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
-        //var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+        var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+
+        var applicationInstance = FindAzureAdApplication(applicationName, graphClient);
+        console.log("applicationInstance");
+        console.log(applicationInstance);
 
         /*
         msRestNodeAuth.loginWithServicePrincipalSecret(
