@@ -1,9 +1,13 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
-//import azureGraph = require('@azure/graph');
+import azureGraph = require('@azure/graph');
 
 async function LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
+}
+
+async function FindAzureAdApplication(applicationName, graphClient){
+    
 }
 
 async function run() {
@@ -38,6 +42,9 @@ async function run() {
         const azureCredentials = await LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId);
         console.log("Azure Credentials");
         console.log(azureCredentials);
+
+        var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
+        //var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         /*
         msRestNodeAuth.loginWithServicePrincipalSecret(
