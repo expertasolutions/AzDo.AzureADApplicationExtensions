@@ -105,9 +105,8 @@
       }
     ],
     "execution": {
-        "Node": {
-          "target": "src//azureAdApplication.js",
-          "argumentFormat": ""
+        "Node10": {
+          "target": "index.js",
         }
       }
 }
