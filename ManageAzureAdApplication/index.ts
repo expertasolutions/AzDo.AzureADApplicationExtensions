@@ -1,14 +1,13 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
 
-async function LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId) {
+async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:string, tenantId:string) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
-}
+};
 
-async function FindAzureAdApplication(applicationName, graphClient){
-    var appFilterValue = "displayName eq '" + applicationName + "'"
+async function FindAzureAdApplication(applicationName:string, graphClient:any){
+    var appFilterValue = "displayName eq '" + applicationName + "'";
     var appFilter = {
         filter: appFilterValue 
     };
