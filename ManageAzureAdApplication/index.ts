@@ -1,6 +1,6 @@
-import tl = require('azure-pipelines-task-lib/task');
-import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
-import azureGraph = require('@azure/graph');
+const tl = require('azure-pipelines-task-lib/task');
+const msRestNodeAuth = require('@azure/ms-rest-nodeauth');
+const azureGraph = require('@azure/graph');
 
 async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:string, tenantId:string) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
