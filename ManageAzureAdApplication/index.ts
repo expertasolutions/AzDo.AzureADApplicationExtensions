@@ -1,6 +1,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
+import { race } from 'q';
 
 async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:string, tenantId:string) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
@@ -19,27 +20,133 @@ async function FindAzureAdApplication(applicationName:string, graphClient:any){
     }
 }
 
-async function FindServicePrincipalByAppId(appId, graphClient){
+async function AssignADApplicationPermissions() {
+    return null;
+}
+
+async function CreateServicePrincipal(
+      applicationName:string
+    , applicationId:string
+    , graphClient:azureGraph.GraphRbacManagementClient
+) {
+    var serviceParms = {
+        displayName: applicationName,
+        appId: applicationId
+    };
+    return graphClient.servicePrincipals.create(serviceParms);
+}
+
+async function UpdateADApplication(){
+    return null;
+}
+
+async function AddADApplicationOwner(
+        applicationObjectId:string
+    ,   ownerId:string
+    ,   tenantId:string
+    ,   graphClient:azureGraph.GraphRbacManagementClient) 
+{
+    var ownerParm = {
+        url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+    };
+    console.log("Adding owner to Azure ActiveDirectory Application ...");
+    return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
+}
+
+async function CreateADApplication(
+          applicationName:string
+        , rootDomain:string
+        , applicationSecret:string
+        , homeUrl:string
+        , taskReplyUrls:string
+        , requiredResource:string
+        , graphClient:azureGraph.GraphRbacManagementClient
+) {
+    console.log("Creating new Azure ActiveDirectory AD Application...");
+    var now = new Date();
+    const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
+    var newPwdCreds = [{
+        endDate: nextYear,
+        value: applicationSecret
+    }];
+
+    var taskUrlArray:Array<string>;
+    if(taskReplyUrls.length === 0){
+        taskUrlArray = [
+            'http://' + applicationName + '.' + rootDomain,
+            'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
+            'http://' + applicationName + '.' + rootDomain + '/signin-aad'
+        ];
+    } else {
+        taskUrlArray = JSON.parse(taskReplyUrls);
+    }
+
+    var newAppParms = {
+        displayName: applicationName,
+        homepage: homeUrl,
+        passwordCredentials: newPwdCreds,
+        replyUrls: taskUrlArray,
+        requiredResourceAccess: JSON.parse(requiredResource)
+    };
+    return await graphClient.applications.create(newAppParms);
+}
+
+async function grantAuth2Permissions (
+        rqAccess: any
+    ,   servicePrincipalId:string
+    ,   graphClient:azureGraph.GraphRbacManagementClient
+) {
+    var resourceAppFilter = {
+        filter: "appId eq '" + rqAccess.resourceAppId + "'"
+    };
+    
+    var rs = await graphClient.servicePrincipals.list(resourceAppFilter);
+    var srv = rs[0];
+    var desiredScope = "";
+    for(var i=0;i<rqAccess.resourceAccess.length;i++){
+        var rAccess = rqAccess.resourceAccess[i];
+        var permission = srv.oauth2Permissions.find(p=> {
+            return p.id === rAccess.id;
+        });
+        desiredScope += permission.value + " ";
+    }
+
+    var now = new Date();
+    const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
+    
+    var permission = {
+        body: {
+            clientId: servicePrincipalId,
+            consentType: 'AllPrincipals',
+            scope: desiredScope,
+            resourceId: srv.objectId,
+            expiryTime: nextYear.toISOString()
+        }
+    };
+    return await graphClient.oAuth2PermissionGrant.create(permission);
+}
+
+async function FindServicePrincipalByAppId(appId:string, graphClient:azureGraph.GraphRbacManagementClient) {
     return null;
 }
 
 async function run() {
     try {
         
-        var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
-        var applicationName = tl.getInput("applicationName", true);
-        var ownerId = tl.getInput("applicationOwnerId", true);
-        var rootDomain = tl.getInput("rootDomain", true);
-        var applicationSecret = tl.getInput("applicationSecretPassword", true);
-        var requiredResource = tl.getInput("requiredResource", true);
-        var homeUrl = tl.getInput("homeUrl", true);
-        var taskReplyUrls = tl.getInput("replyUrls", false);
+        var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true) as string;
+        var applicationName = tl.getInput("applicationName", true) as string;
+        var ownerId = tl.getInput("applicationOwnerId", true) as string;
+        var rootDomain = tl.getInput("rootDomain", true) as string;
+        var applicationSecret = tl.getInput("applicationSecretPassword", true) as string;
+        var requiredResource = tl.getInput("requiredResource", true) as string;
+        var homeUrl = tl.getInput("homeUrl", true) as string;
+        var taskReplyUrls = tl.getInput("replyUrls", false) as string;
         
-        var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
+        var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false) as string;
 
-        var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false);
-        var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false);
-        var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false);
+        var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false) as string;
+        var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false) as string;
+        var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false) as string;
 
         console.log("SubscriptionId: " + subcriptionId);
         console.log("ServicePrincipalId: " + servicePrincipalId);
@@ -53,47 +160,68 @@ async function run() {
         console.log("");
 
         const azureCredentials = await LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId);
-        console.log("Azure Credentials");
-        console.log(azureCredentials);
 
-        var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
+        var pipeCreds:any = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         var applicationInstance = FindAzureAdApplication(applicationName, graphClient);
-
+        
         if(applicationInstance == null){
-            console.log("Application not found");
+            
+            // Create new Azure AD Application
+            var newApp = await CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+            console.log(newApp);
+
+            // Add Owner to new Azure AD Application
+            var ownerAdd = await AddADApplicationOwner(newApp.objectId, ownerId, tenantId, graphClient);
+            console.log(ownerAdd);
+
+            // Create Service Principal for Azure AD Application
+            var newServicePrincipal = await CreateServicePrincipal(applicationName, newApp.appId, graphClient);
+            console.log(newServicePrincipal);
+
+            // Set Application Permission
+            var applicationServicePrincipalObjectId = newServicePrincipal.objectId;
+            for(var i=0;i<newApp.requiredResourceAccess.length;i++){
+                var rqAccess = newApp.requiredResourceAccess[i];
+                var newPermission = await grantAuth2Permissions(rqAccess, applicationServicePrincipalObjectId, graphClient);
+                console.log(newPermission);
+            }
+
+            // Update Application IdentifierUris
+            var appUpdateParms = {
+                identifierUris: ['https://' + rootDomain + '/' + newApp.appId ]
+            };
+            await graphClient.applications.patch(newApp.objectId, appUpdateParm);
+            tl.setVariable("azureAdApplicationId", newApp.appId);
         } else {
             console.log("Application found");
             console.log(applicationInstance);
         }
 
-        /*
-        msRestNodeAuth.loginWithServicePrincipalSecret(
-            servicePrincipalId, servicePrincipalKey, tenantId
-        ).then(creds => {
-            var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
-            var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+            //var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
+            //var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
             
-            var appFilterValue = "displayName eq '" + applicationName + "'"
-            var appFilter = {
-                filter: appFilterValue 
-            };
+            //var appFilterValue = "displayName eq '" + applicationName + "'"
+            //var appFilter = {
+            //    filter: appFilterValue 
+            //};
 
-            graphClient.applications.list(appFilter)
-            .then(apps => {
-                var appObject = apps[0];
+            //graphClient.applications.list(appFilter)
+            //.then(apps => {
+                //var appObject = apps[0];
 
-                var now = new Date();
-                const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
+                //var now = new Date();
+                //const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
 
                 // Use UpdatePasswordCredentials
-                var newPwdCreds = [{
-                    endDate: nextYear,
-                    value: applicationSecret,
-                }];
+                //var newPwdCreds = [{
+                //    endDate: nextYear,
+                //    value: applicationSecret,
+                //}];
 
-                if(apps.length == 0){
+                //if(apps.length == 0){
+                    /*
                     console.log("Creating new Azure Active Directory application...");
                     var taskUrlArray;
                     if(taskReplyUrls.length === 0){
@@ -105,7 +233,8 @@ async function run() {
                     } else {
                         taskUrlArray = JSON.parse(taskReplyUrls);
                     }
-
+                    */
+                    /*
                     var newAppParms = {
                         displayName: applicationName,
                         homepage: homeUrl,
@@ -113,6 +242,8 @@ async function run() {
                         replyUrls: taskUrlArray,
                         requiredResourceAccess: JSON.parse(requiredResource)
                     };
+                    */
+/*
                     graphClient.applications.create(newAppParms)
                     .then(applicationCreateResult => {
                         var serviceParms = {
@@ -133,7 +264,8 @@ async function run() {
                         console.log("Creating Application Service Principal ...");
                         graphClient.servicePrincipals.create(serviceParms)
                         .then(serviceCreateResult => {
-
+*/
+/*
                             var applicationServicePrincipalObjectId = serviceCreateResult.objectId;
                             for(var i=0;i<applicationCreateResult.requiredResourceAccess.length;i++) {
                                 var rqAccess = applicationCreateResult.requiredResourceAccess[i];
@@ -172,7 +304,8 @@ async function run() {
                                     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                                 });
                             }
-
+*/
+/*
                             var appUpdateParm = {
                                 identifierUris: [ 'https://' + rootDomain + '/' + applicationCreateResult.appId ]
                             };
@@ -190,7 +323,9 @@ async function run() {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     })
                 } else {
-
+*/
+    
+/*
                     // Add expected owner
                     var ownerParm = {
                         url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
@@ -215,6 +350,9 @@ async function run() {
                     .catch(err=> {
                         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
                     });
+*/
+
+/*
                 }
             }).catch(err=> {
                 tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
@@ -222,7 +360,7 @@ async function run() {
         }).catch(err=> {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
         });
-    */
+*/    
     } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }

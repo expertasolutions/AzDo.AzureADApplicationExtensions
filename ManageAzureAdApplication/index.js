@@ -74,6 +74,122 @@ function FindAzureAdApplication(applicationName, graphClient) {
         });
     });
 }
+function AssignADApplicationPermissions() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, null];
+        });
+    });
+}
+function CreateServicePrincipal(applicationName, applicationId, graphClient) {
+    return __awaiter(this, void 0, void 0, function () {
+        var serviceParms;
+        return __generator(this, function (_a) {
+            serviceParms = {
+                displayName: applicationName,
+                appId: applicationId
+            };
+            return [2 /*return*/, graphClient.servicePrincipals.create(serviceParms)];
+        });
+    });
+}
+function UpdateADApplication() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, null];
+        });
+    });
+}
+function AddADApplicationOwner(applicationObjectId, ownerId, tenantId, graphClient) {
+    return __awaiter(this, void 0, void 0, function () {
+        var ownerParm;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    ownerParm = {
+                        url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+                    };
+                    console.log("Adding owner to Azure ActiveDirectory Application ...");
+                    return [4 /*yield*/, graphClient.applications.addOwner(applicationObjectId, ownerParm)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient) {
+    return __awaiter(this, void 0, void 0, function () {
+        var now, nextYear, newPwdCreds, taskUrlArray, newAppParms;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("Creating new Azure ActiveDirectory AD Application...");
+                    now = new Date();
+                    nextYear = new Date(now.getFullYear() + 1, now.getMonth(), now.getDay());
+                    newPwdCreds = [{
+                            endDate: nextYear,
+                            value: applicationSecret
+                        }];
+                    if (taskReplyUrls.length === 0) {
+                        taskUrlArray = [
+                            'http://' + applicationName + '.' + rootDomain,
+                            'http://' + applicationName + '.' + rootDomain + '/signin-oidc',
+                            'http://' + applicationName + '.' + rootDomain + '/signin-aad'
+                        ];
+                    }
+                    else {
+                        taskUrlArray = JSON.parse(taskReplyUrls);
+                    }
+                    newAppParms = {
+                        displayName: applicationName,
+                        homepage: homeUrl,
+                        passwordCredentials: newPwdCreds,
+                        replyUrls: taskUrlArray,
+                        requiredResourceAccess: JSON.parse(requiredResource)
+                    };
+                    return [4 /*yield*/, graphClient.applications.create(newAppParms)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
+    return __awaiter(this, void 0, void 0, function () {
+        var resourceAppFilter, rs, srv, desiredScope, i, rAccess, permission, now, nextYear, permission;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    resourceAppFilter = {
+                        filter: "appId eq '" + rqAccess.resourceAppId + "'"
+                    };
+                    return [4 /*yield*/, graphClient.servicePrincipals.list(resourceAppFilter)];
+                case 1:
+                    rs = _a.sent();
+                    srv = rs[0];
+                    desiredScope = "";
+                    for (i = 0; i < rqAccess.resourceAccess.length; i++) {
+                        rAccess = rqAccess.resourceAccess[i];
+                        permission = srv.oauth2Permissions.find(function (p) {
+                            return p.id === rAccess.id;
+                        });
+                        desiredScope += permission.value + " ";
+                    }
+                    now = new Date();
+                    nextYear = new Date(now.getFullYear() + 1, now.getMonth(), now.getDay());
+                    permission = {
+                        body: {
+                            clientId: servicePrincipalId,
+                            consentType: 'AllPrincipals',
+                            scope: desiredScope,
+                            resourceId: srv.objectId,
+                            expiryTime: nextYear.toISOString()
+                        }
+                    };
+                    return [4 /*yield*/, graphClient.oAuth2PermissionGrant.create(permission)];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
 function FindServicePrincipalByAppId(appId, graphClient) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -83,11 +199,11 @@ function FindServicePrincipalByAppId(appId, graphClient) {
 }
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var azureEndpointSubscription, applicationName, ownerId, rootDomain, applicationSecret, requiredResource, homeUrl, taskReplyUrls, subcriptionId, servicePrincipalId, servicePrincipalKey, tenantId, azureCredentials, pipeCreds, graphClient, applicationInstance, err_1;
+        var azureEndpointSubscription, applicationName, ownerId, rootDomain, applicationSecret, requiredResource, homeUrl, taskReplyUrls, subcriptionId, servicePrincipalId, servicePrincipalKey, tenantId, azureCredentials, pipeCreds, graphClient, applicationInstance, newApp, ownerAdd, newServicePrincipal, applicationServicePrincipalObjectId, i, rqAccess, newPermission, appUpdateParms, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
+                    _a.trys.push([0, 12, , 13]);
                     azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
                     applicationName = tl.getInput("applicationName", true);
                     ownerId = tl.getInput("applicationOwnerId", true);
@@ -113,24 +229,55 @@ function run() {
                     return [4 /*yield*/, LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId)];
                 case 1:
                     azureCredentials = _a.sent();
-                    console.log("Azure Credentials");
-                    console.log(azureCredentials);
                     pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
                     graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
                     applicationInstance = FindAzureAdApplication(applicationName, graphClient);
-                    if (applicationInstance == null) {
-                        console.log("Application not found");
-                    }
-                    else {
-                        console.log("Application found");
-                        console.log(applicationInstance);
-                    }
-                    return [3 /*break*/, 3];
+                    if (!(applicationInstance == null)) return [3 /*break*/, 10];
+                    return [4 /*yield*/, CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 2:
+                    newApp = _a.sent();
+                    console.log(newApp);
+                    return [4 /*yield*/, AddADApplicationOwner(newApp.objectId, ownerId, tenantId, graphClient)];
+                case 3:
+                    ownerAdd = _a.sent();
+                    console.log(ownerAdd);
+                    return [4 /*yield*/, CreateServicePrincipal(applicationName, newApp.appId, graphClient)];
+                case 4:
+                    newServicePrincipal = _a.sent();
+                    console.log(newServicePrincipal);
+                    applicationServicePrincipalObjectId = newServicePrincipal.objectId;
+                    i = 0;
+                    _a.label = 5;
+                case 5:
+                    if (!(i < newApp.requiredResourceAccess.length)) return [3 /*break*/, 8];
+                    rqAccess = newApp.requiredResourceAccess[i];
+                    return [4 /*yield*/, grantAuth2Permissions(rqAccess, applicationServicePrincipalObjectId, graphClient)];
+                case 6:
+                    newPermission = _a.sent();
+                    console.log(newPermission);
+                    _a.label = 7;
+                case 7:
+                    i++;
+                    return [3 /*break*/, 5];
+                case 8:
+                    appUpdateParms = {
+                        identifierUris: ['https://' + rootDomain + '/' + newApp.appId]
+                    };
+                    return [4 /*yield*/, graphClient.applications.patch(newApp.objectId, appUpdateParm)];
+                case 9:
+                    _a.sent();
+                    tl.setVariable("azureAdApplicationId", newApp.appId);
+                    return [3 /*break*/, 11];
+                case 10:
+                    console.log("Application found");
+                    console.log(applicationInstance);
+                    _a.label = 11;
+                case 11: return [3 /*break*/, 13];
+                case 12:
                     err_1 = _a.sent();
                     tl.setResult(tl.TaskResult.Failed, err_1.message || 'run() failed');
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [3 /*break*/, 13];
+                case 13: return [2 /*return*/];
             }
         });
     });
