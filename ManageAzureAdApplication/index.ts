@@ -85,10 +85,12 @@ async function CreateOrUpdateADApplication(
         requiredResourceAccess: JSON.parse(requiredResource)
     };
 
-    if(appObjectId == null)
+    if(appObjectId == null){
         return await graphClient.applications.create(newAppParms);
-    else
+    }
+    else {
         return await graphClient.applications.patch(appObjectId, newAppParms);
+    }
 }
 
 async function grantAuth2Permissions (
@@ -161,7 +163,6 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
-        console.log(applicationInstance);
         if(applicationInstance == null){
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
@@ -185,8 +186,8 @@ async function run() {
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } else {
             console.log("Update Application AD");
-            console.log(applicationInstance);
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+            console.log(applicationInstance);
         }
         tl.setVariable("azureAdApplicationId", applicationInstance.appId);
 } catch (err) {

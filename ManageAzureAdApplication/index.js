@@ -219,7 +219,6 @@ function run() {
                     return [4 /*yield*/, FindAzureAdApplication(applicationName, graphClient)];
                 case 2:
                     applicationInstance = _a.sent();
-                    console.log(applicationInstance);
                     if (!(applicationInstance == null)) return [3 /*break*/, 11];
                     return [4 /*yield*/, CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 3:
@@ -255,10 +254,10 @@ function run() {
                     return [3 /*break*/, 13];
                 case 11:
                     console.log("Update Application AD");
-                    console.log(applicationInstance);
                     return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 12:
                     applicationInstance = _a.sent();
+                    console.log(applicationInstance);
                     _a.label = 13;
                 case 13:
                     tl.setVariable("azureAdApplicationId", applicationInstance.appId);
