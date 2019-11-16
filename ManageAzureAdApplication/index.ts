@@ -160,39 +160,40 @@ async function run() {
         var pipeCreds:any = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
-        var applicationInstance = FindAzureAdApplication(applicationName, graphClient);
-        
+        var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
         if(applicationInstance == null){
-            
             // Create new Azure AD Application
-            var newApp = await CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            console.log(newApp);
+            applicationInstance = await CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+            console.log(applicationInstance);
 
             // Add Owner to new Azure AD Application
-            var ownerAdd = await AddADApplicationOwner(newApp.objectId, ownerId, tenantId, graphClient);
+            var ownerAdd = await AddADApplicationOwner(applicationInstance.objectId, ownerId, tenantId, graphClient);
             console.log(ownerAdd);
 
             // Create Service Principal for Azure AD Application
-            var newServicePrincipal = await CreateServicePrincipal(applicationName, newApp.appId, graphClient);
+            var newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId, graphClient);
             console.log(newServicePrincipal);
 
             // Set Application Permission
             var applicationServicePrincipalObjectId = newServicePrincipal.objectId;
-            for(var i=0;i<newApp.requiredResourceAccess.length;i++){
-                var rqAccess = newApp.requiredResourceAccess[i];
+            for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
+                var rqAccess = applicationInstance.requiredResourceAccess[i];
                 var newPermission = await grantAuth2Permissions(rqAccess, applicationServicePrincipalObjectId, graphClient);
                 console.log(newPermission);
             }
 
-            // Update Application IdentifierUris
+            // Update Application IdentifierUrisapplicationInstance
             var appUpdateParms = {
-                identifierUris: ['https://' + rootDomain + '/' + newApp.appId ]
+                identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
             };
-            await graphClient.applications.patch(newApp.objectId, appUpdateParms);
-            tl.setVariable("azureAdApplicationId", newApp.appId);
+            await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
+            tl.setVariable("azureAdApplicationId", applicationInstance.appId);
         } else {
             console.log("Application found");
             console.log(applicationInstance);
+
+            //var ownerAdd = await Add
+
         }
 
             //var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
