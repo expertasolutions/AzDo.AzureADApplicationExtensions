@@ -175,10 +175,9 @@ async function run() {
             console.log(newServicePrincipal);
 
             // Set Application Permission
-            var applicationServicePrincipalObjectId = newServicePrincipal.objectId;
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
-                var newPermission = await grantAuth2Permissions(rqAccess, applicationServicePrincipalObjectId, graphClient);
+                var newPermission = await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId, graphClient);
                 console.log(newPermission);
             }
 
