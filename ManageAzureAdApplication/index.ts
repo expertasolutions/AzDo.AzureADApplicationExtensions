@@ -12,6 +12,9 @@ async function FindAzureAdApplication(applicationName:string, graphClient:any){
         filter: appFilterValue 
     };
     var searchResults = await graphClient.applications.list(appFilter);
+    console.log("--------");
+    console.log(searchResults);
+    console.log("--------");
     if(searchResults.length === 0){
         return null;
     } else {
@@ -158,6 +161,7 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
+        console.log(applicationInstance);
         if(applicationInstance == null){
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);

@@ -63,6 +63,9 @@ function FindAzureAdApplication(applicationName, graphClient) {
                     return [4 /*yield*/, graphClient.applications.list(appFilter)];
                 case 1:
                     searchResults = _a.sent();
+                    console.log("--------");
+                    console.log(searchResults);
+                    console.log("--------");
                     if (searchResults.length === 0) {
                         return [2 /*return*/, null];
                     }
@@ -216,6 +219,7 @@ function run() {
                     return [4 /*yield*/, FindAzureAdApplication(applicationName, graphClient)];
                 case 2:
                     applicationInstance = _a.sent();
+                    console.log(applicationInstance);
                     if (!(applicationInstance == null)) return [3 /*break*/, 11];
                     return [4 /*yield*/, CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 3:
