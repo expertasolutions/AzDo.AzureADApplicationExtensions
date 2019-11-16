@@ -86,13 +86,6 @@ function CreateServicePrincipal(applicationName, applicationId, graphClient) {
         });
     });
 }
-function UpdateADApplication() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, null];
-        });
-    });
-}
 function AddADApplicationOwner(applicationObjectId, ownerId, tenantId, graphClient) {
     return __awaiter(this, void 0, void 0, function () {
         var ownerParm;
@@ -109,7 +102,7 @@ function AddADApplicationOwner(applicationObjectId, ownerId, tenantId, graphClie
         });
     });
 }
-function CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient) {
+function CreateOrUpdateADApplication(appObjectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient) {
     return __awaiter(this, void 0, void 0, function () {
         var now, nextYear, newPwdCreds, taskUrlArray, newAppParms;
         return __generator(this, function (_a) {
@@ -139,8 +132,11 @@ function CreateADApplication(applicationName, rootDomain, applicationSecret, hom
                         replyUrls: taskUrlArray,
                         requiredResourceAccess: JSON.parse(requiredResource)
                     };
+                    if (!(appObjectId == null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, graphClient.applications.create(newAppParms)];
                 case 1: return [2 /*return*/, _a.sent()];
+                case 2: return [4 /*yield*/, graphClient.applications.patch(appObjectId, newAppParms)];
+                case 3: return [2 /*return*/, _a.sent()];
             }
         });
     });
@@ -183,20 +179,13 @@ function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
         });
     });
 }
-function FindServicePrincipalByAppId(appId, graphClient) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, null];
-        });
-    });
-}
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var azureEndpointSubscription, applicationName, ownerId, rootDomain, applicationSecret, requiredResource, homeUrl, taskReplyUrls, subcriptionId, servicePrincipalId, servicePrincipalKey, tenantId, azureCredentials, pipeCreds, graphClient, applicationInstance, ownerAdd, newServicePrincipal, i, rqAccess, newPermission, appUpdateParms, err_1;
+        var azureEndpointSubscription, applicationName, ownerId, rootDomain, applicationSecret, requiredResource, homeUrl, taskReplyUrls, subcriptionId, servicePrincipalId, servicePrincipalKey, tenantId, azureCredentials, pipeCreds, graphClient, applicationInstance, newServicePrincipal, i, rqAccess, appUpdateParms, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 13, , 14]);
+                    _a.trys.push([0, 14, , 15]);
                     azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
                     applicationName = tl.getInput("applicationName", true);
                     ownerId = tl.getInput("applicationOwnerId", true);
@@ -228,19 +217,18 @@ function run() {
                 case 2:
                     applicationInstance = _a.sent();
                     if (!(applicationInstance == null)) return [3 /*break*/, 11];
-                    return [4 /*yield*/, CreateADApplication(applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
+                    return [4 /*yield*/, CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 3:
                     // Create new Azure AD Application
                     applicationInstance = _a.sent();
-                    console.log(applicationInstance);
+                    // Add Owner to new Azure AD Application
                     return [4 /*yield*/, AddADApplicationOwner(applicationInstance.objectId, ownerId, tenantId, graphClient)];
                 case 4:
-                    ownerAdd = _a.sent();
-                    console.log(ownerAdd);
+                    // Add Owner to new Azure AD Application
+                    _a.sent();
                     return [4 /*yield*/, CreateServicePrincipal(applicationName, applicationInstance.appId, graphClient)];
                 case 5:
                     newServicePrincipal = _a.sent();
-                    console.log(newServicePrincipal);
                     i = 0;
                     _a.label = 6;
                 case 6:
@@ -248,8 +236,7 @@ function run() {
                     rqAccess = applicationInstance.requiredResourceAccess[i];
                     return [4 /*yield*/, grantAuth2Permissions(rqAccess, newServicePrincipal.objectId, graphClient)];
                 case 7:
-                    newPermission = _a.sent();
-                    console.log(newPermission);
+                    _a.sent();
                     _a.label = 8;
                 case 8:
                     i++;
@@ -261,18 +248,19 @@ function run() {
                     return [4 /*yield*/, graphClient.applications.patch(applicationInstance.objectId, appUpdateParms)];
                 case 10:
                     _a.sent();
-                    tl.setVariable("azureAdApplicationId", applicationInstance.appId);
-                    return [3 /*break*/, 12];
-                case 11:
-                    console.log("Application found");
-                    console.log(applicationInstance);
-                    _a.label = 12;
-                case 12: return [3 /*break*/, 14];
+                    return [3 /*break*/, 13];
+                case 11: return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
+                case 12:
+                    applicationInstance = _a.sent();
+                    _a.label = 13;
                 case 13:
+                    tl.setVariable("azureAdApplicationId", applicationInstance.appId);
+                    return [3 /*break*/, 15];
+                case 14:
                     err_1 = _a.sent();
                     tl.setResult(tl.TaskResult.Failed, err_1.message || 'run() failed');
-                    return [3 /*break*/, 14];
-                case 14: return [2 /*return*/];
+                    return [3 /*break*/, 15];
+                case 15: return [2 /*return*/];
             }
         });
     });
