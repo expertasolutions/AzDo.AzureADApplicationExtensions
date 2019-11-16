@@ -63,9 +63,6 @@ function FindAzureAdApplication(applicationName, graphClient) {
                     return [4 /*yield*/, graphClient.applications.list(appFilter)];
                 case 1:
                     searchResults = _a.sent();
-                    console.log("--------");
-                    console.log(searchResults);
-                    console.log("--------");
                     if (searchResults.length === 0) {
                         return [2 /*return*/, null];
                     }
@@ -135,11 +132,17 @@ function CreateOrUpdateADApplication(appObjectId, applicationName, rootDomain, a
                         replyUrls: taskUrlArray,
                         requiredResourceAccess: JSON.parse(requiredResource)
                     };
-                    if (!(appObjectId == null)) return [3 /*break*/, 2];
+                    if (!(appObjectId == null)) return [3 /*break*/, 3];
                     return [4 /*yield*/, graphClient.applications.create(newAppParms)];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2: return [4 /*yield*/, graphClient.applications.patch(appObjectId, newAppParms)];
-                case 3: return [2 /*return*/, _a.sent()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, FindAzureAdApplication(applicationName, graphClient)];
+                case 2: return [2 /*return*/, _a.sent()];
+                case 3: return [4 /*yield*/, graphClient.applications.patch(appObjectId, newAppParms)];
+                case 4:
+                    _a.sent();
+                    return [4 /*yield*/, FindAzureAdApplication(applicationName, graphClient)];
+                case 5: return [2 /*return*/, _a.sent()];
             }
         });
     });
@@ -256,8 +259,7 @@ function run() {
                     console.log("Update Application AD");
                     return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 12:
-                    applicationInstance = _a.sent();
-                    console.log(applicationInstance);
+                    _a.sent();
                     _a.label = 13;
                 case 13:
                     tl.setVariable("azureAdApplicationId", applicationInstance.appId);

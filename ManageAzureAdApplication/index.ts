@@ -12,9 +12,6 @@ async function FindAzureAdApplication(applicationName:string, graphClient:any){
         filter: appFilterValue 
     };
     var searchResults = await graphClient.applications.list(appFilter);
-    console.log("--------");
-    console.log(searchResults);
-    console.log("--------");
     if(searchResults.length === 0){
         return null;
     } else {
@@ -86,10 +83,12 @@ async function CreateOrUpdateADApplication(
     };
 
     if(appObjectId == null){
-        return await graphClient.applications.create(newAppParms);
+        await graphClient.applications.create(newAppParms);
+        return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
-        return await graphClient.applications.patch(appObjectId, newAppParms);
+        await graphClient.applications.patch(appObjectId, newAppParms);
+        return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
 
@@ -186,8 +185,7 @@ async function run() {
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } else {
             console.log("Update Application AD");
-            applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            console.log(applicationInstance);
+            await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
         }
         tl.setVariable("azureAdApplicationId", applicationInstance.appId);
 } catch (err) {
