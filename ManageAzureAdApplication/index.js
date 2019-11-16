@@ -74,13 +74,6 @@ function FindAzureAdApplication(applicationName, graphClient) {
         });
     });
 }
-function AssignADApplicationPermissions() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/, null];
-        });
-    });
-}
 function CreateServicePrincipal(applicationName, applicationId, graphClient) {
     return __awaiter(this, void 0, void 0, function () {
         var serviceParms;
@@ -154,7 +147,7 @@ function CreateADApplication(applicationName, rootDomain, applicationSecret, hom
 }
 function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
     return __awaiter(this, void 0, void 0, function () {
-        var resourceAppFilter, rs, srv, desiredScope, i, rAccess, permission, now, nextYear, permission;
+        var resourceAppFilter, rs, srv, desiredScope, i, rAccess, p, now, nextYear, permissions;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -168,14 +161,14 @@ function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
                     desiredScope = "";
                     for (i = 0; i < rqAccess.resourceAccess.length; i++) {
                         rAccess = rqAccess.resourceAccess[i];
-                        permission = srv.oauth2Permissions.find(function (p) {
+                        p = srv.oauth2Permissions.find(function (p) {
                             return p.id === rAccess.id;
                         });
-                        desiredScope += permission.value + " ";
+                        desiredScope += p.value + " ";
                     }
                     now = new Date();
                     nextYear = new Date(now.getFullYear() + 1, now.getMonth(), now.getDay());
-                    permission = {
+                    permissions = {
                         body: {
                             clientId: servicePrincipalId,
                             consentType: 'AllPrincipals',
@@ -184,7 +177,7 @@ function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
                             expiryTime: nextYear.toISOString()
                         }
                     };
-                    return [4 /*yield*/, graphClient.oAuth2PermissionGrant.create(permission)];
+                    return [4 /*yield*/, graphClient.oAuth2PermissionGrant.create(permissions)];
                 case 2: return [2 /*return*/, _a.sent()];
             }
         });
@@ -263,7 +256,7 @@ function run() {
                     appUpdateParms = {
                         identifierUris: ['https://' + rootDomain + '/' + newApp.appId]
                     };
-                    return [4 /*yield*/, graphClient.applications.patch(newApp.objectId, appUpdateParm)];
+                    return [4 /*yield*/, graphClient.applications.patch(newApp.objectId, appUpdateParms)];
                 case 9:
                     _a.sent();
                     tl.setVariable("azureAdApplicationId", newApp.appId);

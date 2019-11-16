@@ -20,10 +20,6 @@ async function FindAzureAdApplication(applicationName:string, graphClient:any){
     }
 }
 
-async function AssignADApplicationPermissions() {
-    return null;
-}
-
 async function CreateServicePrincipal(
       applicationName:string
     , applicationId:string
@@ -105,16 +101,16 @@ async function grantAuth2Permissions (
     var desiredScope = "";
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
         var rAccess = rqAccess.resourceAccess[i];
-        var permission = srv.oauth2Permissions.find(p=> {
+        var p = srv.oauth2Permissions.find(p=> {
             return p.id === rAccess.id;
         });
-        desiredScope += permission.value + " ";
+        desiredScope += p.value + " ";
     }
 
     var now = new Date();
     const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
     
-    var permission = {
+    var permissions = {
         body: {
             clientId: servicePrincipalId,
             consentType: 'AllPrincipals',
@@ -123,7 +119,7 @@ async function grantAuth2Permissions (
             expiryTime: nextYear.toISOString()
         }
     };
-    return await graphClient.oAuth2PermissionGrant.create(permission);
+    return await graphClient.oAuth2PermissionGrant.create(permissions)
 }
 
 async function FindServicePrincipalByAppId(appId:string, graphClient:azureGraph.GraphRbacManagementClient) {
@@ -192,7 +188,7 @@ async function run() {
             var appUpdateParms = {
                 identifierUris: ['https://' + rootDomain + '/' + newApp.appId ]
             };
-            await graphClient.applications.patch(newApp.objectId, appUpdateParm);
+            await graphClient.applications.patch(newApp.objectId, appUpdateParms);
             tl.setVariable("azureAdApplicationId", newApp.appId);
         } else {
             console.log("Application found");
