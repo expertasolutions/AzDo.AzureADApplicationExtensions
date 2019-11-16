@@ -40,7 +40,7 @@ async function AddADApplicationOwner(
     var ownerParm = {
         url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
     };
-    console.log("Adding owner to Azure ActiveDirectory Application ...");
+    console.log("   Adding owner to Azure ActiveDirectory Application ...");
     return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
 }
 
@@ -54,8 +54,11 @@ async function CreateOrUpdateADApplication(
         , requiredResource:string
         , graphClient:azureGraph.GraphRbacManagementClient
 ) {
-    console.log("Creating new Azure ActiveDirectory AD Application...");
-    
+    if(appObjectId === null)
+        console.log("Creating new Azure ActiveDirectory AD Application...");
+    else
+        console.log("Updating Azure ActiveDirectory AD Application...");
+
     var now = new Date();
     const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
     var newPwdCreds = [{
@@ -184,7 +187,6 @@ async function run() {
             };
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } else {
-            console.log("Update Application AD");
             await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
         }
         tl.setVariable("azureAdApplicationId", applicationInstance.appId);

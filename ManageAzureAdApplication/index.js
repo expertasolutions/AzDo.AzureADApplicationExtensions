@@ -108,7 +108,10 @@ function CreateOrUpdateADApplication(appObjectId, applicationName, rootDomain, a
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("Creating new Azure ActiveDirectory AD Application...");
+                    if (appObjectId === null)
+                        console.log("Creating new Azure ActiveDirectory AD Application...");
+                    else
+                        console.log("Updating Azure ActiveDirectory AD Application...");
                     now = new Date();
                     nextYear = new Date(now.getFullYear() + 1, now.getMonth(), now.getDay());
                     newPwdCreds = [{
@@ -255,9 +258,7 @@ function run() {
                 case 10:
                     _a.sent();
                     return [3 /*break*/, 13];
-                case 11:
-                    console.log("Update Application AD");
-                    return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
+                case 11: return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 12:
                     _a.sent();
                     _a.label = 13;
