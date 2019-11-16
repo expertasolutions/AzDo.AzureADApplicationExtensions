@@ -249,7 +249,10 @@ function run() {
                 case 10:
                     _a.sent();
                     return [3 /*break*/, 13];
-                case 11: return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
+                case 11:
+                    console.log("Update Application AD");
+                    console.log(applicationInstance);
+                    return [4 /*yield*/, CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 12:
                     applicationInstance = _a.sent();
                     _a.label = 13;

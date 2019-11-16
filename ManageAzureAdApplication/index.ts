@@ -180,6 +180,8 @@ async function run() {
             };
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } else {
+            console.log("Update Application AD");
+            console.log(applicationInstance);
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
         }
         tl.setVariable("azureAdApplicationId", applicationInstance.appId);
