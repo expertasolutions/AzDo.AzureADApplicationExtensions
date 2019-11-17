@@ -6,8 +6,8 @@ async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:strin
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 };
 
-async function FindAzureAdApplication(applicationName:string, graphClient:any){
-    var appFilterValue = "displayName eq '" + applicationName + "'";
+async function FindAzureAdApplication(applicationId:string, graphClient:any){
+    var appFilterValue = "appId eq '" + applicationId + "'";
     var appFilter = {
         filter: appFilterValue 
     };
@@ -22,14 +22,14 @@ async function FindAzureAdApplication(applicationName:string, graphClient:any){
 async function run() {
     try {
         
-        var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
-        var applicationId = tl.getInput("applicationId", true);
+        var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true) as string;
+        var applicationId = tl.getInput("applicationId", true) as string;
         
-        var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
+        var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false) as string;
     
-        var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false);
-        var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false);
-        var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false);
+        var servicePrincipalId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalid", false) as string;
+        var servicePrincipalKey = tl.getEndpointAuthorizationParameter(azureEndpointSubscription, "serviceprincipalkey", false) as string;
+        var tenantId = tl.getEndpointAuthorizationParameter(azureEndpointSubscription,"tenantid", false) as string;
     
         console.log("SubscriptionId: " + subcriptionId);
         console.log("ServicePrincipalId: " + servicePrincipalId);
@@ -37,17 +37,19 @@ async function run() {
         console.log("TenantId: " + tenantId);
     
         console.log("Application Id: " + applicationId);
-        //
 
         const azureCredentials = await LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId);
 
         var pipeCreds:any = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
-        var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
+        var applicationInstance = await FindAzureAdApplication(applicationId, graphClient);
         if(applicationInstance == null){
-            
-        } 
+            console.log("Azure AD Application with id '" + applicationId + "' does not exists");
+        } else {
+          console.log("Azure AD Application with id '" + applicationId + "' is found");
+          console.log(applicationInstance);
+        }
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
