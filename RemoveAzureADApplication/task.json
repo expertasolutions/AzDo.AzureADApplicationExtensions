@@ -39,9 +39,8 @@
         }
     ],
     "execution": {
-        "Node": {
-          "target": "src//removeAdApp.js",
-          "argumentFormat": ""
+        "Node10": {
+          "target": "removeAdApp.js"
         }
       }
 }

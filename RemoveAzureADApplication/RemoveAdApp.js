@@ -29,26 +29,7 @@ try {
     console.log("TenantId: " + tenantId);
 
     console.log("Application Id: " + applicationId);
-   
-    var pwsh = new shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-    });
     
-    pwsh.addCommand(__dirname  + "/RemoveAdApp.ps1 -subscriptionId '" + subcriptionId + "'"
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
-        + " -applicationId '" + applicationId + "'")
-        .then(function(){
-            return pwsh.invoke();
-        })
-        .then(function(output){
-            console.log(output);
-            pwsh.dispose();
-        }).catch(function(err){
-            console.log(err);
-            tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
-            pwsh.dispose();
-        });
 } catch (err) {
     console.log(err);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');

@@ -45,13 +45,19 @@ try {
 
         graphClient.servicePrincipals.list(appFilter)
         .then(appResults => {
-            var appEntity = appResults[0];
-            console.log("Set the Azure AD Application id...");
-            tl.setVariable("azureAdApplicationId", appEntity.appId);
+            if(appResults.length === 0){
+                console.log("Application not found");
+                console.log(appResults);
+            } else {
+                var appEntity = appResults[0];
+                console.log("Set the Azure AD Application id...");
+                console.log(appEntity);
+                tl.setVariable("azureAdApplicationId", appEntity.appId);
 
-            console.log("Set the Azure Permission access ...");
-            var permissionString = JSON.stringify(appEntity.oauth2Permissions);
-            tl.setVariable("azureAdApplicationResourceAccessJson", permissionString);
+                console.log("Set the Azure Permission access ...");
+                var permissionString = JSON.stringify(appEntity.oauth2Permissions);
+                tl.setVariable("azureAdApplicationResourceAccessJson", permissionString);
+            }
         })
         .catch(err => {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
