@@ -25,7 +25,6 @@ async function DeleteAzureADApplication(applicationObjectId:string, graphClient:
 
 async function run() {
     try {
-        
         var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true) as string;
         var applicationId = tl.getInput("applicationId", true) as string;
         
@@ -39,7 +38,6 @@ async function run() {
         console.log("ServicePrincipalId: " + servicePrincipalId);
         console.log("ServicePrincipalKey: " + servicePrincipalKey);
         console.log("TenantId: " + tenantId);
-    
         console.log("Application Id: " + applicationId);
 
         const azureCredentials = await LoginToAzure(servicePrincipalId, servicePrincipalKey, tenantId);

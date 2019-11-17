@@ -3,8 +3,6 @@ Tasks packages to manage Azure AD Application from Azure DevOps release pipeline
 
 ## Available tasks
 
-### CreateServicePrincipal (details soon)
-
 ### GetAzureAdApplicationId (required parameters)
 - Azure subscription
 
