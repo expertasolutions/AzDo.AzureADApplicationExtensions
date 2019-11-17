@@ -95,7 +95,7 @@ function AddADApplicationOwner(applicationObjectId, ownerId, tenantId, graphClie
                     ownerParm = {
                         url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
                     };
-                    console.log("Adding owner to Azure ActiveDirectory Application ...");
+                    console.log("   Adding owner to Azure ActiveDirectory Application ...");
                     return [4 /*yield*/, graphClient.applications.addOwner(applicationObjectId, ownerParm)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -166,10 +166,12 @@ function grantAuth2Permissions(rqAccess, servicePrincipalId, graphClient) {
                     desiredScope = "";
                     for (i = 0; i < rqAccess.resourceAccess.length; i++) {
                         rAccess = rqAccess.resourceAccess[i];
-                        p = srv.oauth2Permissions.find(function (p) {
-                            return p.id === rAccess.id;
-                        });
-                        desiredScope += p.value + " ";
+                        if (srv.oauth2Permissions != null) {
+                            p = srv.oauth2Permissions.find(function (p) {
+                                return p.id === rAccess.id;
+                            });
+                            desiredScope += p.value + " ";
+                        }
                     }
                     now = new Date();
                     nextYear = new Date(now.getFullYear() + 1, now.getMonth(), now.getDay());

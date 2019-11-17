@@ -109,10 +109,12 @@ async function grantAuth2Permissions (
     var desiredScope = "";
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
         var rAccess = rqAccess.resourceAccess[i];
-        var p = srv.oauth2Permissions.find(p=> {
-            return p.id === rAccess.id;
-        });
-        desiredScope += p.value + " ";
+        if(srv.oauth2Permissions != null) {
+            var p = srv.oauth2Permissions.find(p=> {
+                return p.id === rAccess.id;
+            }) as azureGraph.GraphRbacManagementModels.OAuth2Permission;
+            desiredScope += p.value + " ";
+        }
     }
 
     var now = new Date();
@@ -126,7 +128,7 @@ async function grantAuth2Permissions (
             resourceId: srv.objectId,
             expiryTime: nextYear.toISOString()
         }
-    };
+    } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
     return await graphClient.oAuth2PermissionGrant.create(permissions)
 }
 
