@@ -10,12 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 
 var tl = require('azure-pipelines-task-lib');
-var shell = require('node-powershell');
+const msRestNodeAuth = require('@azure/ms-rest-nodeauth');
+const azureGraph = require('@azure/graph');
 
 try {
     
     var azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
-    var applicationId = tl.getInput("applicationId", true);
+    var applicationName = tl.getInput("applicationName", true);
     
     var subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
 
@@ -28,28 +29,40 @@ try {
     console.log("ServicePrincipalKey: " + servicePrincipalKey);
     console.log("TenantId: " + tenantId);
 
-    console.log("Application Id: " + applicationId);
-   
-    var pwsh = new shell({
-        executionPolicy: 'Bypass',
-        noProfile: true
-    });
-    
-    pwsh.addCommand(__dirname  + "/RemoveAdApp.ps1 -subscriptionId '" + subcriptionId + "'"
-        + " -servicePrincipalId '" + servicePrincipalId + "' -servicePrincipalKey '" + servicePrincipalKey + "' -tenantId '" + tenantId + "'"
-        + " -applicationId '" + applicationId + "'")
-        .then(function(){
-            return pwsh.invoke();
+    console.log("Application Name: " + applicationName);
+
+    msRestNodeAuth.loginWithServicePrincipalSecret(
+        servicePrincipalId, servicePrincipalKey, tenantId
+    ).then(creds => {
+
+        var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
+        var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+        
+        var appFilterValue = "displayName eq '" + applicationName + "'"
+        var appFilter = {
+            filter: appFilterValue 
+        };
+
+        graphClient.servicePrincipals.list(appFilter)
+        .then(appResults => {
+            if(appResults.length === 0){
+                console.log("Azure AD Application with name '" + applicationName + "' is not found");
+            } else {
+                var appEntity = appResults[0];
+                console.log("Set the Azure AD Application id...");
+                tl.setVariable("azureAdApplicationId", appEntity.appId);
+
+                console.log("Set the Azure Permission access ...");
+                var permissionString = JSON.stringify(appEntity.oauth2Permissions);
+                tl.setVariable("azureAdApplicationResourceAccessJson", permissionString);
+            }
         })
-        .then(function(output){
-            console.log(output);
-            pwsh.dispose();
-        }).catch(function(err){
-            console.log(err);
+        .catch(err => {
             tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
-            pwsh.dispose();
         });
+    }).catch(err => {
+        tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
+    });
 } catch (err) {
-    console.log(err);
     tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
 }

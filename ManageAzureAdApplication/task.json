@@ -5,7 +5,7 @@
     "description": "Task to create/update Azure AD Application",
     "helpMarkDown": "",
     "category": "Utility",
-    "preview": false,
+    "preview": true,
     "author": "Solutions Experta Inc.",
     "version": {
         "Major": 0,
@@ -85,7 +85,7 @@
           "Name": "homeUrl",
           "type": "string",
           "label": "Home Url",
-          "required": false,
+          "required": true,
           "helpMarkDown": "",
           "groupName": "customazureadapplicationdetails"
         },
@@ -94,6 +94,7 @@
             "type": "string",
             "label": "Reply Urls (json)",
             "required": false,
+            "defaultValue":"[]",
             "helpMarkDown": "",
             "groupName": "customazureadapplicationdetails"
         }
@@ -105,9 +106,8 @@
       }
     ],
     "execution": {
-        "Node": {
-          "target": "src//azureAdApplication.js",
-          "argumentFormat": ""
+        "Node10": {
+          "target": "index.js"
         }
       }
 }

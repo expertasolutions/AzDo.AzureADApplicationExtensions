@@ -1,5 +1,5 @@
 {
-  "name": "ManageAzureAdApplication",
+  "name": "manageazureadapplication",
   "version": "1.0.0",
   "description": "Task to create/update Azure AD Application",
   "main": "azureAdApplication.js",
@@ -9,8 +9,13 @@
   "author": "Solutions Experta Inc.",
   "license": "MIT",
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.8.0",
-    "node-powershell": "^3.3.1",
-    "node-powershellcore": "^1.0.0"
+    "@azure/graph": "^5.0.0",
+    "@azure/ms-rest-nodeauth": "^2.0.5",
+    "azure-pipelines-task-lib": "^2.9.3",
+    "typescript": "^3.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.7",
+    "@types/q": "^1.5.2"
   }
 }
