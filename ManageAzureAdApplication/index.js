@@ -118,7 +118,7 @@ function CreateOrUpdateADApplication(appObjectId, applicationName, rootDomain, a
                             endDate: nextYear,
                             value: applicationSecret
                         }];
-                    if (taskReplyUrls.length === 0) {
+                    if (taskReplyUrls === undefined || taskReplyUrls.length === 0) {
                         taskUrlArray = [
                             'http://' + applicationName + '.' + rootDomain,
                             'http://' + applicationName + '.' + rootDomain + '/signin-oidc',

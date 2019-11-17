@@ -67,7 +67,7 @@ async function CreateOrUpdateADApplication(
     }];
 
     var taskUrlArray:Array<string>;
-    if(taskReplyUrls.length === 0){
+    if(taskReplyUrls === undefined || taskReplyUrls.length === 0){
         taskUrlArray = [
             'http://' + applicationName + '.' + rootDomain,
             'http://' + applicationName + '.' + rootDomain + '/signin-oidc',

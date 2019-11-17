@@ -94,6 +94,7 @@
             "type": "string",
             "label": "Reply Urls (json)",
             "required": false,
+            "defaultValue":"[]",
             "helpMarkDown": "",
             "groupName": "customazureadapplicationdetails"
         }
