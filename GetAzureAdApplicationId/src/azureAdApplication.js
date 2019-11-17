@@ -46,12 +46,10 @@ try {
         graphClient.servicePrincipals.list(appFilter)
         .then(appResults => {
             if(appResults.length === 0){
-                console.log("Application not found");
-                console.log(appResults);
+                console.log("Azure AD Application with name '" + applicationName + "' is not found");
             } else {
                 var appEntity = appResults[0];
                 console.log("Set the Azure AD Application id...");
-                console.log(appEntity);
                 tl.setVariable("azureAdApplicationId", appEntity.appId);
 
                 console.log("Set the Azure Permission access ...");

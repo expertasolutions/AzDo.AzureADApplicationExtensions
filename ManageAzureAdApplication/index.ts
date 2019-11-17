@@ -6,7 +6,7 @@ async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:strin
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 };
 
-async function FindAzureAdApplication(applicationName:string, graphClient:any){
+async function FindAzureAdApplication(applicationName:string, graphClient:azureGraph.GraphRbacManagementClient){
     var appFilterValue = "displayName eq '" + applicationName + "'";
     var appFilter = {
         filter: appFilterValue 
@@ -167,7 +167,7 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
-        if(applicationInstance == null){
+        if(applicationInstance === null){
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 

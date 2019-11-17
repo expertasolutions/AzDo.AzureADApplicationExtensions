@@ -227,7 +227,7 @@ function run() {
                     return [4 /*yield*/, FindAzureAdApplication(applicationName, graphClient)];
                 case 2:
                     applicationInstance = _a.sent();
-                    if (!(applicationInstance == null)) return [3 /*break*/, 11];
+                    if (!(applicationInstance === null)) return [3 /*break*/, 11];
                     return [4 /*yield*/, CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient)];
                 case 3:
                     // Create new Azure AD Application

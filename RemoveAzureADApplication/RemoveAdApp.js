@@ -74,13 +74,23 @@ function FindAzureAdApplication(applicationId, graphClient) {
         });
     });
 }
+function DeleteAzureADApplication(applicationObjectId, graphClient) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, graphClient.applications.deleteMethod(applicationObjectId)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function () {
         var azureEndpointSubscription, applicationId, subcriptionId, servicePrincipalId, servicePrincipalKey, tenantId, azureCredentials, pipeCreds, graphClient, applicationInstance, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 3, , 4]);
+                    _a.trys.push([0, 6, , 7]);
                     azureEndpointSubscription = tl.getInput("azureSubscriptionEndpoint", true);
                     applicationId = tl.getInput("applicationId", true);
                     subcriptionId = tl.getEndpointDataParameter(azureEndpointSubscription, "subscriptionId", false);
@@ -100,19 +110,22 @@ function run() {
                     return [4 /*yield*/, FindAzureAdApplication(applicationId, graphClient)];
                 case 2:
                     applicationInstance = _a.sent();
-                    if (applicationInstance == null) {
-                        console.log("Azure AD Application with id '" + applicationId + "' does not exists");
-                    }
-                    else {
-                        console.log("Azure AD Application with id '" + applicationId + "' is found");
-                        console.log(applicationInstance);
-                    }
-                    return [3 /*break*/, 4];
+                    if (!(applicationInstance == null)) return [3 /*break*/, 3];
+                    console.log("Azure AD Application with id '" + applicationId + "' does not exists");
+                    return [3 /*break*/, 5];
                 case 3:
+                    console.log("Azure AD Application with id '" + applicationId + "' is found");
+                    console.log("   Removing Azure AD Application with id '" + applicationId + "' ...");
+                    return [4 /*yield*/, DeleteAzureADApplication(applicationInstance.objectId, graphClient)];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6:
                     err_1 = _a.sent();
                     tl.setResult(tl.TaskResult.Failed, err_1.message || 'run() failed');
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });

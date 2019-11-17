@@ -6,7 +6,7 @@ async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:strin
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 };
 
-async function FindAzureAdApplication(applicationId:string, graphClient:any){
+async function FindAzureAdApplication(applicationId:string, graphClient:azureGraph.GraphRbacManagementClient){
     var appFilterValue = "appId eq '" + applicationId + "'";
     var appFilter = {
         filter: appFilterValue 
@@ -17,6 +17,10 @@ async function FindAzureAdApplication(applicationId:string, graphClient:any){
     } else {
         return searchResults[0];
     }
+}
+
+async function DeleteAzureADApplication(applicationObjectId:string, graphClient:azureGraph.GraphRbacManagementClient){
+  return await graphClient.applications.deleteMethod(applicationObjectId);
 }
 
 async function run() {
@@ -48,7 +52,8 @@ async function run() {
             console.log("Azure AD Application with id '" + applicationId + "' does not exists");
         } else {
           console.log("Azure AD Application with id '" + applicationId + "' is found");
-          console.log(applicationInstance);
+          console.log("   Removing Azure AD Application with id '" + applicationId + "' ...");
+          await DeleteAzureADApplication(applicationInstance.objectId, graphClient);
         }
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
