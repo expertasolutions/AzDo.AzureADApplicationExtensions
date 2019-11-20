@@ -15,11 +15,13 @@
     "Build",
     "Release",
     "Azure Pipelines",
-    "Azure Ad",
+    "Azure AD",
     "Application",
     "macOS",
     "linux",
-    "windows"
+    "windows",
+    "devops",
+    "AzureDevOps"
   ],
   "links":{
     "support": { 
@@ -47,13 +49,13 @@
   ],
   "badges": [
     {
-      "href":"https://dev.azure.com/experta/ExpertaSolutions/_build/latest?definitionId=198",
-      "uri":"https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=master",
+      "href":"https://dev.azure.com/experta/Community/_build?definitionId=225&_a=summary",
+      "uri":"https://dev.azure.com/experta/Community/_apis/build/status/CD-GitHub-AzureADApplication?branchName=master",
       "description": "Master build"
     },
     {
-      "href":"https://dev.azure.com/experta/ExpertaSolutions/_releaseDefinition?definitionId=14",
-      "uri":"https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/48", 
+      "href":"https://dev.azure.com/experta/Community/_release?view=all&_a=releases&definitionId=4",
+      "uri":"https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/97814487-b723-4a7d-a446-f599ab91ea2f/4/12", 
       "description" : "Public Marketplace"
     }
   ],
