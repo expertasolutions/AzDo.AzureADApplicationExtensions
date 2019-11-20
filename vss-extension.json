@@ -47,8 +47,8 @@
   ],
   "badges": [
     {
-      "href":"https://dev.azure.com/experta/ExpertaSolutions/_build/latest?definitionId=198",
-      "uri":"https://dev.azure.com/experta/ExpertaSolutions/_apis/build/status/GitHub-AzureADAppExt-CI?branchName=master",
+      "href":"https://dev.azure.com/experta/Community/_build?definitionId=225&_a=summary",
+      "uri":"https://dev.azure.com/experta/Community/_apis/build/status/CD-GitHub-AzureADApplication?branchName=master",
       "description": "Master build"
     },
     {
