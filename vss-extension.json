@@ -52,8 +52,8 @@
       "description": "Master build"
     },
     {
-      "href":"https://dev.azure.com/experta/ExpertaSolutions/_releaseDefinition?definitionId=14",
-      "uri":"https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/5b43050d-0a01-4269-ace5-9e22c920391c/14/48", 
+      "href":"https://dev.azure.com/experta/Community/_release?view=all&_a=releases&definitionId=4",
+      "uri":"https://vsrm.dev.azure.com/experta/_apis/public/Release/badge/97814487-b723-4a7d-a446-f599ab91ea2f/4/12", 
       "description" : "Public Marketplace"
     }
   ],
