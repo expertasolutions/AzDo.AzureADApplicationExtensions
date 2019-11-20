@@ -15,11 +15,13 @@
     "Build",
     "Release",
     "Azure Pipelines",
-    "Azure Ad",
+    "Azure AD",
     "Application",
     "macOS",
     "linux",
-    "windows"
+    "windows",
+    "devops",
+    "AzureDevOps"
   ],
   "links":{
     "support": { 
