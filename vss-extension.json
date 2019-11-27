@@ -9,7 +9,7 @@
           "id": "Microsoft.VisualStudio.Services"
       }
   ],    
-  "description": "Tasks package for Azure AD Applications",
+  "description": "Tasks package for Azure AD Applications / Service Principal",
   "tags": [
     "Azure AD Application",
     "Build",
@@ -21,7 +21,8 @@
     "linux",
     "windows",
     "devops",
-    "AzureDevOps"
+    "AzureDevOps",
+    "ServicePrincipal"
   ],
   "links":{
     "support": { 
@@ -45,7 +46,8 @@
   "files": [
       { "path": "ManageAzureAdApplication" },
       { "path": "GetAzureAdApplicationId" },
-      { "path": "RemoveAzureAdApplication" }
+      { "path": "RemoveAzureAdApplication" },
+      { "path": "_img", "addressable": true}
   ],
   "badges": [
     {
