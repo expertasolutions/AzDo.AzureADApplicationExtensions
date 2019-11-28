@@ -1,2 +1,4 @@
 node_modules
 package-lock.json
+GetAzureAdApplicationId/index.js
+ManageAzureAdApplication/index.js
