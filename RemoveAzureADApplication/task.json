@@ -40,7 +40,7 @@
     ],
     "execution": {
         "Node10": {
-          "target": "removeAdApp.js"
+          "target": "index.js"
         }
       }
 }

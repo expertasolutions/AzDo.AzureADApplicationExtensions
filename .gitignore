@@ -1,3 +1,2 @@
 node_modules
-GetAzureAdApplicationId/index.js
-ManageAzureAdApplication/index.js
+*.js

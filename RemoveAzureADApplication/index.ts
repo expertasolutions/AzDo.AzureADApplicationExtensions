@@ -51,7 +51,7 @@ async function run() {
         } else {
           console.log("Azure AD Application with id '" + applicationId + "' is found");
           console.log("   Removing Azure AD Application with id '" + applicationId + "' ...");
-          await DeleteAzureADApplication(applicationInstance.objectId, graphClient);
+          await DeleteAzureADApplication(applicationInstance.objectId as string, graphClient);
         }
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
