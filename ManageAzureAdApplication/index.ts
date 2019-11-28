@@ -166,16 +166,16 @@ async function run() {
         var pipeCreds:any = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
-        var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
+        let applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
         if(applicationInstance === null){
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
             // Add Owner to new Azure AD Application
-            await AddADApplicationOwner(applicationInstance.objectId, ownerId, tenantId, graphClient);
+            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
-            var newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId, graphClient);
+            var newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
             // Set Application Permission
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
@@ -188,10 +188,9 @@ async function run() {
                 identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
             };
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
-        } else {
-            await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-        }
-        tl.setVariable("azureAdApplicationId", applicationInstance.appId);
+        } 
+        await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+        tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
