@@ -35,8 +35,8 @@ try {
         servicePrincipalId, servicePrincipalKey, tenantId
     ).then(creds => {
 
-        var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
-        var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
+        //var pipeCreds = new msRestNodeAuth.ApplicationTokenCredentials(creds.clientId, tenantId, creds.secret, 'graph');
+        //var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
         
         var appFilterValue = "displayName eq '" + applicationName + "'"
         var appFilter = {

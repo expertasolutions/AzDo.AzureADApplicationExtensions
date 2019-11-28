@@ -56,7 +56,7 @@
     ],
     "execution": {
         "Node": {
-          "target": "azureAdApplication.js",
+          "target": "index.js",
           "argumentFormat": ""
         }
       }
