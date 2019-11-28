@@ -189,7 +189,10 @@ async function run() {
             };
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } 
-        await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+        else {
+            await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+        }
+        
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
