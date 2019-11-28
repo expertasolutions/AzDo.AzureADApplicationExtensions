@@ -4,7 +4,9 @@
   "description": "Task to remove an Azure AD Application Id",
   "main": "RemoveAdApp.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc -project tsconfig.json",
+    "publishExt": "npm install && tsc -project tsconfig.json"
   },
   "author": "Solutions Experta Inc.",
   "license": "MIT",
