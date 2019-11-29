@@ -34,7 +34,8 @@ async function CreateServicePrincipal(
         appId: applicationId
     };
     let result = await graphClient.servicePrincipals.create(serviceParms);
-    console.log(result);
+    // Delay for the Azure AD Application and Service Principal...
+    await delay(20000);
     return result;
 }
 
@@ -94,16 +95,17 @@ async function CreateOrUpdateADApplication(
 
     if(appObjectId == null){
         let createResult = await graphClient.applications.create(newAppParms);
-        console.log(createResult);
+
         // Delay for the Azure AD Application and Service Principal...
-        await delay(10000);
+        await delay(5000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
         let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
-        console.log(updateResult);
+
         // Delay for the Azure AD Application and Service Principal...
-        await delay(10000);
+        await delay(5000);
+
         return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
@@ -191,9 +193,6 @@ async function run() {
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
-            // Delay for the Azure AD Application and Service Principal...
-            await delay(10000);
-
             // Set Application Permission
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
@@ -211,6 +210,9 @@ async function run() {
         }
         
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
+
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(5000);
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
