@@ -35,7 +35,7 @@ async function CreateServicePrincipal(
     };
     let result = await graphClient.servicePrincipals.create(serviceParms);
     // Delay for the Azure AD Application and Service Principal...
-    await delay(20000);
+    await delay(60000);
     return result;
 }
 
@@ -97,14 +97,14 @@ async function CreateOrUpdateADApplication(
         let createResult = await graphClient.applications.create(newAppParms);
 
         // Delay for the Azure AD Application and Service Principal...
-        await delay(5000);
+        await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
         let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
 
         // Delay for the Azure AD Application and Service Principal...
-        await delay(5000);
+        await delay(10000);
 
         return await FindAzureAdApplication(applicationName, graphClient);
     }
@@ -212,7 +212,7 @@ async function run() {
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
         // Delay for the Azure AD Application and Service Principal...
-        await delay(5000);
+        await delay(10000);
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
