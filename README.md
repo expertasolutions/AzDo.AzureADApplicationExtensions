@@ -1,7 +1,7 @@
 # Purpose
 Tasks package that help manage Azure AD Application and Service Principal from Azure DevOps pipeline to your Azure Active Directory.
 
-***This package is all patform compatible.***
+***This package is all platform compatible.***
 
 # Prerequisites to be used
 The **Azure Resource Manager** endpoint used with these tasks in your Azure DevOps require to have the proper **API permissions**.
