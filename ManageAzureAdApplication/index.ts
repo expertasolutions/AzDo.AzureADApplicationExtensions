@@ -24,11 +24,12 @@ async function CreateServicePrincipal(
     , applicationId:string
     , graphClient:azureGraph.GraphRbacManagementClient
 ) {
+    console.log("Create Service Principal ...");
     var serviceParms = {
         displayName: applicationName,
         appId: applicationId
     };
-    return graphClient.servicePrincipals.create(serviceParms);
+    return await graphClient.servicePrincipals.create(serviceParms);
 }
 
 async function AddADApplicationOwner(
@@ -100,6 +101,7 @@ async function grantAuth2Permissions (
     ,   servicePrincipalId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient
 ) {
+    console.log("Grant Auth2Permissions ...");
     var resourceAppFilter = {
         filter: "appId eq '" + rqAccess.resourceAppId + "'"
     };
