@@ -89,11 +89,13 @@ async function CreateOrUpdateADApplication(
     };
 
     if(appObjectId == null){
-        await graphClient.applications.create(newAppParms);
+        let createResult = await graphClient.applications.create(newAppParms);
+        console.log(createResult);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
-        await graphClient.applications.patch(appObjectId, newAppParms);
+        let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
+        console.log(updateResult);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
