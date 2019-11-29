@@ -2,6 +2,10 @@ import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
 
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:string, tenantId:string) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 };
@@ -91,11 +95,15 @@ async function CreateOrUpdateADApplication(
     if(appObjectId == null){
         let createResult = await graphClient.applications.create(newAppParms);
         console.log(createResult);
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
         let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
         console.log(updateResult);
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
@@ -182,6 +190,9 @@ async function run() {
 
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
+
+            // Delay for the Azure AD Application and Service Principal...
+            await delay(10000);
 
             // Set Application Permission
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
