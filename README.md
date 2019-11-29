@@ -3,10 +3,12 @@ Tasks packages to manage Azure AD Application from Azure DevOps release pipeline
 
 ## Available tasks
 
-### GetAzureAdApplicationId (required parameters)
-- Azure subscription
+### GetAzureAdApplicationId
+![GetAzureAdApplication](_img/get-azureadapplicationdetail-v2.jpg)
 
-### ManageAzureApplication (required parameters)
+### ManageAzureApplication
+![ManageAzureAdApplication](_img/manageAdApplication-v2.jpg)
+#### Required parameters
 - Azure subscription
 - Application name
 - Owner (user objectId - GUID)
@@ -34,5 +36,5 @@ Tasks packages to manage Azure AD Application from Azure DevOps release pipeline
 
 	```["http://myurl.com","https://myurl.com]```
 
-### RemoveAzureADApplication (required parameters)
-- Azure AD Application ID
+### RemoveAzureADApplication
+![Remove-AzureApplicationAD](_img/remove-applicationad-v2.jpg)

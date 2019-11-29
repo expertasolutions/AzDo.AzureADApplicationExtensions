@@ -2,6 +2,10 @@ import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
 
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 async function LoginToAzure(servicePrincipalId:string, servicePrincipalKey:string, tenantId:string) {
     return await msRestNodeAuth.loginWithServicePrincipalSecret(servicePrincipalId, servicePrincipalKey, tenantId );
 };
@@ -24,11 +28,15 @@ async function CreateServicePrincipal(
     , applicationId:string
     , graphClient:azureGraph.GraphRbacManagementClient
 ) {
+    console.log("Create Service Principal ...");
     var serviceParms = {
         displayName: applicationName,
         appId: applicationId
     };
-    return graphClient.servicePrincipals.create(serviceParms);
+    let result = await graphClient.servicePrincipals.create(serviceParms);
+    // Delay for the Azure AD Application and Service Principal...
+    await delay(60000);
+    return result;
 }
 
 async function AddADApplicationOwner(
@@ -86,11 +94,18 @@ async function CreateOrUpdateADApplication(
     };
 
     if(appObjectId == null){
-        await graphClient.applications.create(newAppParms);
+        let createResult = await graphClient.applications.create(newAppParms);
+
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
-        await graphClient.applications.patch(appObjectId, newAppParms);
+        let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
+
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(10000);
+
         return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
@@ -100,6 +115,7 @@ async function grantAuth2Permissions (
     ,   servicePrincipalId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient
 ) {
+    console.log("Grant Auth2Permissions ...");
     var resourceAppFilter = {
         filter: "appId eq '" + rqAccess.resourceAppId + "'"
     };
@@ -166,16 +182,16 @@ async function run() {
         var pipeCreds:any = new msRestNodeAuth.ApplicationTokenCredentials(azureCredentials.clientId, tenantId, azureCredentials.secret, 'graph');
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
-        var applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
+        let applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
         if(applicationInstance === null){
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
             // Add Owner to new Azure AD Application
-            await AddADApplicationOwner(applicationInstance.objectId, ownerId, tenantId, graphClient);
+            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
-            var newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId, graphClient);
+            let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
             // Set Application Permission
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
@@ -188,10 +204,15 @@ async function run() {
                 identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
             };
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
-        } else {
-            await CreateOrUpdateADApplication(applicationInstance.objectId, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+        } 
+        else {
+            await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
         }
-        tl.setVariable("azureAdApplicationId", applicationInstance.appId);
+        
+        tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
+
+        // Delay for the Azure AD Application and Service Principal...
+        await delay(10000);
 } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
