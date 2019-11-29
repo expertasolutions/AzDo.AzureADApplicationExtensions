@@ -29,7 +29,9 @@ async function CreateServicePrincipal(
         displayName: applicationName,
         appId: applicationId
     };
-    return await graphClient.servicePrincipals.create(serviceParms);
+    let result = await graphClient.servicePrincipals.create(serviceParms);
+    console.log(result);
+    return result;
 }
 
 async function AddADApplicationOwner(
@@ -177,7 +179,7 @@ async function run() {
             await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
-            var newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
+            let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
             // Set Application Permission
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
