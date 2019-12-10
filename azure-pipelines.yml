@@ -2,18 +2,63 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
+# CD-GitHub-AzureDNSZone
+name: AzureDNSZone-v5.$(date:yy)$(DayOfYear).$(rev:r)-$(Build.SourceBranchName)
 
 trigger:
 - master
+- issue*
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: MacNetCorePools
+  demands: npm
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: VersionExtractor@4
+  displayName: Version extractor digit
+  name: buildExtractor
+  inputs:
+    stringToAnalyze: '$(build.buildNumber)'
+- task: TfxInstaller@2
+  displayName: "Use Node CLI for Azure DevOps (tfx-cli): v0.6.x"
+  inputs:
+    version: 'v0.6.x'
+- task: Npm@1
+  displayName: TypeScript Install
+  inputs:
+    command: 'custom'
+    workingDir: 'aRecordManager'
+    customCommand: 'install -g typescript'
+- task: Npm@1
+  displayName: Build ARecordManager
+  inputs:
+    command: 'custom'
+    workingDir: 'aRecordManager'
+    customCommand: 'run publishExt'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Npm@1
+  displayName: Build CNAMERecordManager
+  inputs:
+    command: 'custom'
+    workingDir: 'cnameRecordManager'
+    customCommand: 'run publishExt'
+- task: PackageAzureDevOpsExtension@2
+  displayName: Package Extension
+  inputs:
+    rootFolder: 
+    extensionVersion: '$(buildExtractor.fullVersion)'
+    updateTasksVersion: true
+
+- task: CopyFiles@2
+  displayName: Copy *.vsix
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '*.vsix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
