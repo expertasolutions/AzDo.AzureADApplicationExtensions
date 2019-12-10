@@ -1,6 +1,8 @@
 # Purpose
 Tasks package that help manage Azure AD Application and Service Principal from Azure DevOps pipeline to your Azure Active Directory.
 
+![MasterBuildStatus](https://dev.azure.com/experta/Community/_apis/build/status/expertasolutions.AzureADApplicationExtensions?branchName=master)
+
 ***This package is all platform compatible.***
 
 # Prerequisites to be used
