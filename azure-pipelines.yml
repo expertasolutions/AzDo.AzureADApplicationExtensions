@@ -1,5 +1,7 @@
 name: AzureADApplication-v2.$(date:yy)$(DayOfYear).$(rev:r)-$(Build.SourceBranchName)
-
+trigger:
+- master
+- issue*
 pool:
   name: MacNetCorePools
   demands: npm
