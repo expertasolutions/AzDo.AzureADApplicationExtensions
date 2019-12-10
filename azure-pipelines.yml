@@ -3,7 +3,8 @@ name: AzureADApplication-v2.$(date:yy)$(DayOfYear).$(rev:r)-$(Build.SourceBranch
 pool:
   name: MacNetCorePools
   demands: npm
-
+workspace:
+    clean: all
 steps:
 - task: VersionExtractor@4
   name: versionExtractor
