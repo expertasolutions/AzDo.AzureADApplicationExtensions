@@ -2,15 +2,14 @@ pool:
   name: MacNetCorePools
   demands: npm
 
-#Your build pipeline references an undefined variable named ‘versionExtractor.fullVersion’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
-
 steps:
-- task: ExpertaPreview.pvprExpertaDevOpsTools.custom-build-release-task.VersionExtractor@4
+- task: VersionExtractor@4
+  name: versionExtractor
   displayName: 'Version extractor digit'
   inputs:
     stringToAnalyze: '$(build.buildNumber)'
 
-- task: ms-devlabs.vsts-developer-tools-build-tasks.tfx-installer-build-task.TfxInstaller@2
+- task: TfxInstaller@2
   displayName: 'Use Node CLI for Azure DevOps (tfx-cli): v0.6.x'
 
 - task: Npm@1
@@ -44,7 +43,7 @@ steps:
     verbose: false
     customCommand: 'run publishExt'
 
-- task: ms-devlabs.vsts-developer-tools-build-tasks.package-extension-build-task.PackageAzureDevOpsExtension@2
+- task: PackageAzureDevOpsExtension@2
   displayName: 'Package Extension: '
   inputs:
     extensionVersion: '$(versionExtractor.fullVersion)'
