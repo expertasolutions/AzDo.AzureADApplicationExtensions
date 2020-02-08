@@ -27,7 +27,8 @@
   "links":{
     "support": { 
         "uri": "https://github.com/expertasolutions/AzureADApplicationExtensions/issues"
-    }
+    },
+    "privacypolicy": { "uri": "http://experta.ca/privacy/azuredevopsprivacy" } 
   },
   "repository": {
     "type" : "git",
