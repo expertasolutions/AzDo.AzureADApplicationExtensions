@@ -183,7 +183,7 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         let applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
-        if(applicationInstance === null){
+        if(applicationInstance === null) {
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
@@ -199,7 +199,7 @@ async function run() {
                 await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId as string, graphClient);
             }
 
-            // Update Application IdentifierUrisapplicationInstance
+            // Update Application IdentifierUrisApplicationInstance
             var appUpdateParms = {
                 identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
             };
@@ -207,6 +207,8 @@ async function run() {
         } 
         else {
             await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+        
+            // Update Service Principal
         }
         
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
