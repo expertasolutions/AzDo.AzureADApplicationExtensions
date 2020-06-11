@@ -203,9 +203,6 @@ async function run() {
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
-            // Add Owner to new Azure AD Application
-            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
-
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
@@ -218,10 +215,7 @@ async function run() {
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
-
-            // Add Owner to new Azure AD Application
-            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
-
+            
             /*
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
@@ -230,6 +224,9 @@ async function run() {
             }
             */
         }
+
+        // Add Owner to new Azure AD Application
+        await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
         // Update Application IdentifierUrisApplicationInstance
         var appUpdateParms = {
