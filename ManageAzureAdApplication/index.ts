@@ -45,8 +45,10 @@ async function AddADApplicationOwner(
     ,   tenantId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient) 
 {
+    let urlGraph = 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId;
+    console.log(urlGraph);
     var ownerParm = {
-        url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+        url: urlGraph
     };
     console.log("   Adding owner to Azure ActiveDirectory Application ...");
     let result = await graphClient.applications.addOwner(applicationObjectId, ownerParm);
@@ -190,7 +192,7 @@ async function run() {
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
             // Add Owner to new Azure AD Application
-            //await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
+            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
