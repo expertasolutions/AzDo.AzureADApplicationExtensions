@@ -190,7 +190,7 @@ async function run() {
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
 
             // Add Owner to new Azure AD Application
-            //await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
+            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
