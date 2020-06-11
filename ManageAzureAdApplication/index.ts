@@ -23,6 +23,22 @@ async function FindAzureAdApplication(applicationName:string, graphClient:azureG
     }
 }
 
+async function FindServicePrincipal(
+    applicationName:string
+  , applicationId:string
+  , graphClient:azureGraph.GraphRbacManagementClient
+) {
+  console.log("List Service Principal ...");
+  let result = await graphClient.servicePrincipals.list();
+  for(var i=0;i<result.length;i++) {
+    let srv = result[i];
+    console.log("Service: " + srv.displayName + " ObjectId: " + srv.objectId);
+  }
+  // Delay for the Azure AD Application and Service Principal...
+  // await delay(60000);
+  return result;
+}
+
 async function CreateServicePrincipal(
       applicationName:string
     , applicationId:string
@@ -209,9 +225,12 @@ async function run() {
         } 
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            console.log(JSON.stringify(applicationInstance));
+            let service = await FindServicePrincipal(applicationName, applicationInstance.appId, graphClient);
         }
-        
+
+
+
+
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
         // Delay for the Azure AD Application and Service Principal...
