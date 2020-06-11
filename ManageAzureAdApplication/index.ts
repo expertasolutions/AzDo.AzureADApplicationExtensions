@@ -214,12 +214,6 @@ async function run() {
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
                 await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId as string, graphClient);
             }
-
-            // Update Application IdentifierUrisApplicationInstance
-            var appUpdateParms = {
-                identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
-            };
-            await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } 
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
@@ -235,13 +229,13 @@ async function run() {
                 await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
             */
-
-            // Update Application IdentifierUrisApplicationInstance
-            var appUpdateParms = {
-                identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
-            };
-            await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         }
+
+        // Update Application IdentifierUrisApplicationInstance
+        var appUpdateParms = {
+            identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
+        };
+        await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
 
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
