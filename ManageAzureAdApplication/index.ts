@@ -32,11 +32,19 @@ async function FindServicePrincipal(
   let result = await graphClient.servicePrincipals.list();
   for(var i=0;i<result.length;i++) {
     let srv = result[i];
-    console.log("Service: " + srv.displayName + " ObjectId: " + srv.objectId);
+    console.log("Service: " + srv.displayName + " ObjectId: " + srv.objectId + " AppId: " + srv.appId);
   }
+
+  let findService = result.find(x=> x.appId === applicationId);
+  if(findService) {
+    console.log("");
+    console.log("Find ServicePrincipal: " + JSON.stringify(findService));
+    console.log("");
+  }
+
   // Delay for the Azure AD Application and Service Principal...
   // await delay(60000);
-  return result;
+  return findService;
 }
 
 async function CreateServicePrincipal(
