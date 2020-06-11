@@ -34,6 +34,7 @@ async function CreateServicePrincipal(
         appId: applicationId
     };
     let result = await graphClient.servicePrincipals.create(serviceParms);
+    
     // Delay for the Azure AD Application and Service Principal...
     await delay(60000);
     return result;
@@ -46,14 +47,11 @@ async function AddADApplicationOwner(
     ,   graphClient:azureGraph.GraphRbacManagementClient) 
 {
     let urlGraph = 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId;
-    console.log(urlGraph);
     var ownerParm = {
         url: urlGraph
     };
     console.log("   Adding owner to Azure ActiveDirectory Application ...");
-    let result = await graphClient.applications.addOwner(applicationObjectId, ownerParm);
-    console.log("AddADApplicationOwner --> " + JSON.stringify(result));
-    return result;
+    return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
 }
 
 async function CreateOrUpdateADApplication(
@@ -210,9 +208,8 @@ async function run() {
             await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         } 
         else {
-            await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-        
-            // Update Service Principal
+            applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+            console.log(JSON.stringify(applicationInstance));
         }
         
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
