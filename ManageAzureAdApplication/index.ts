@@ -214,8 +214,9 @@ async function run() {
         } 
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
             
+            //let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
+
             /*
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
