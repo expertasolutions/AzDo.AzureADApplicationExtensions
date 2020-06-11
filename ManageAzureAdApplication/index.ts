@@ -59,8 +59,15 @@ async function AddADApplicationOwner(
     var ownerParm = {
         url: urlGraph
     };
-    console.log("   Adding owner to Azure ActiveDirectory Application ...");
-    return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
+
+    let owners = await graphClient.applications.listOwners(applicationObjectId);
+    if(owners.find(x=> x.objectId === ownerId)) {
+        console.log("   Owner already existing on the Azure ActiveDirectory Application");
+        return undefined;
+    } else {
+        console.log("   Adding owner to Azure ActiveDirectory Application ...");
+        return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
+    }
 }
 
 async function CreateOrUpdateADApplication(
