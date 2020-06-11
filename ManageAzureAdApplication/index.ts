@@ -24,27 +24,12 @@ async function FindAzureAdApplication(applicationName:string, graphClient:azureG
 }
 
 async function FindServicePrincipal(
-    applicationName:string
-  , applicationId:string
+    applicationId:string
   , graphClient:azureGraph.GraphRbacManagementClient
 ) {
   console.log("List Service Principal ...");
   let result = await graphClient.servicePrincipals.list();
-  for(var i=0;i<result.length;i++) {
-    let srv = result[i];
-    console.log("Service: " + srv.displayName + " ObjectId: " + srv.objectId + " AppId: " + srv.appId);
-  }
-
-  let findService = result.find(x=> x.appId === applicationId);
-  if(findService) {
-    console.log("");
-    console.log("Find ServicePrincipal: " + JSON.stringify(findService));
-    console.log("");
-  }
-
-  // Delay for the Azure AD Application and Service Principal...
-  // await delay(60000);
-  return findService;
+  return result.find(x=> x.appId === applicationId);
 }
 
 async function CreateServicePrincipal(
@@ -120,18 +105,16 @@ async function CreateOrUpdateADApplication(
     };
 
     if(appObjectId == null){
-        let createResult = await graphClient.applications.create(newAppParms);
+        await graphClient.applications.create(newAppParms);
 
         // Delay for the Azure AD Application and Service Principal...
         await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
-        let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
-
+        await graphClient.applications.patch(appObjectId, newAppParms);
         // Delay for the Azure AD Application and Service Principal...
         await delay(10000);
-
         return await FindAzureAdApplication(applicationName, graphClient);
     }
 }
@@ -233,17 +216,29 @@ async function run() {
         } 
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            let service = await FindServicePrincipal(applicationName, applicationInstance.appId, graphClient);
+            let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
+
+            // Add Owner to new Azure AD Application
+            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
+
+            // Set Application Permission
+            for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
+                var rqAccess = applicationInstance.requiredResourceAccess[i];
+                await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
+            }
+
+            // Update Application IdentifierUrisApplicationInstance
+            var appUpdateParms = {
+                identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
+            };
+            await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
         }
-
-
-
 
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
         // Delay for the Azure AD Application and Service Principal...
         await delay(10000);
-} catch (err) {
+    } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
 }
