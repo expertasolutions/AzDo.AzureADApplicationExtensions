@@ -209,7 +209,7 @@ async function run() {
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
-            // Set Application Permission
+            // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
                 await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId as string, graphClient);
@@ -228,11 +228,13 @@ async function run() {
             // Add Owner to new Azure AD Application
             await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
-            // Set Application Permission
+            /*
+            // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
                 await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
+            */
 
             // Update Application IdentifierUrisApplicationInstance
             var appUpdateParms = {
