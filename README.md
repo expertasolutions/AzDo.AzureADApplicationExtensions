@@ -15,7 +15,7 @@ Select the App registration related to your AzureDevOps **Azure Resource Manager
 
 **2)** Under that App registration, click on the option **API permissions** and add these ***API Permissions***
 - Azure Active Directory Graph -> Application.ReadWrite.All
-- Microsoft Graph -> Directory.Read.All
+- Azure Active Directory Graph -> Directory.Read.All
 
 **3)** Click on **Grant admin consent for [YOUR Azure AD Organization]** (ensure your are the Owner of the current app registration)
 
