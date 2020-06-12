@@ -33,18 +33,12 @@ async function FindServicePrincipal(
       filter: "appId eq '" + applicationId + "'"
   };
 
-  let result = await graphClient.servicePrincipals.list(resourceAppFilter);
-  /*
-  for(let i=0;i<result.length;i++) {
-      let srv = result[i];
-      if(srv.appId === applicationId) {
-          console.log(srv.displayName + " " + srv.appId + " <-- Found");
-      } else {
-        console.log(srv.displayName + " " + srv.appId);
-      }
+  let searchResults = await graphClient.servicePrincipals.list(resourceAppFilter);
+  if(searchResults.length === 0){
+    return undefined;
+  } else {
+    return searchResults[0];
   }
-  */
-  return result.find(x=> x.appId === applicationId);
 }
 
 async function CreateServicePrincipal(
