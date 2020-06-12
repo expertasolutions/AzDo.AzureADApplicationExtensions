@@ -221,6 +221,13 @@ async function run() {
             } else {
                 console.log("Service not found");
             }
+
+            console.log("Current Application Permissions");
+            for(let p=0;p<applicationInstance.appPermissions.length;p++) {
+                let permission = applicationInstance.appPermissions[p];
+                console.log("   Permissions: " + permission);
+            }
+
             /*
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
