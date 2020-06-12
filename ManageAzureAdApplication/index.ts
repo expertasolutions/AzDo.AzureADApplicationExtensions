@@ -229,7 +229,7 @@ async function run() {
 
             for(let p=0;p<service.oauth2Permissions.length;p++) {
                 let permission = service[p];
-                console.log("   Permission: " + permission.id);
+                console.log("   Permission: " + JSON.stringify(permission));
             }
 
             // Set Application Permissions
