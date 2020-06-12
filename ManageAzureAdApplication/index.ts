@@ -223,13 +223,7 @@ async function run() {
         } 
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-            
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
-            if(service) {
-                console.log("ServiceFind: " + JSON.stringify(service));
-            } else {
-                console.log("Service not found");
-            }
 
             console.log("Current Application Permissions");
 
