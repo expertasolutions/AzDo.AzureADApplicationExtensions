@@ -28,7 +28,13 @@ async function FindServicePrincipal(
   , graphClient:azureGraph.GraphRbacManagementClient
 ) {
   console.log("List Service Principal ...");
-  let result = await graphClient.servicePrincipals.list();
+  
+  var resourceAppFilter = {
+      filter: "appId eq '" + applicationId + "'"
+  };
+
+  let result = await graphClient.servicePrincipals.list(resourceAppFilter);
+  /*
   for(let i=0;i<result.length;i++) {
       let srv = result[i];
       if(srv.appId === applicationId) {
@@ -37,6 +43,7 @@ async function FindServicePrincipal(
         console.log(srv.displayName + " " + srv.appId);
       }
   }
+  */
   return result.find(x=> x.appId === applicationId);
 }
 
@@ -231,6 +238,7 @@ async function run() {
             }
 
             console.log("Current Application Permissions");
+
             for(let p=0;p<applicationInstance.appPermissions.length;p++) {
                 let permission = applicationInstance.appPermissions[p];
                 console.log("   Permissions: " + permission);
