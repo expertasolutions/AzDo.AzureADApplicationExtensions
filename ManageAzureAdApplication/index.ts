@@ -23,7 +23,7 @@ async function FindAzureAdApplication(applicationName:string, graphClient:azureG
     }
 }
 
-async function FindServicePrincipal(
+async function FindServicePrincipal (
     applicationId:string
   , graphClient:azureGraph.GraphRbacManagementClient
 ) {
@@ -233,9 +233,9 @@ async function run() {
 
             console.log("Current Application Permissions");
 
-            for(let p=0;p<applicationInstance.appPermissions.length;p++) {
-                let permission = applicationInstance.appPermissions[p];
-                console.log("   Permissions: " + permission);
+            for(let p=0;p<service.oauth2Permissions.length;p++) {
+                let permission = service.oauth2Permissions[p];
+                console.log("   Permission: " + permission.id);
             }
 
             /*
