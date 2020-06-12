@@ -29,6 +29,14 @@ async function FindServicePrincipal(
 ) {
   console.log("List Service Principal ...");
   let result = await graphClient.servicePrincipals.list();
+  for(let i=0;i<result.length;i++) {
+      let srv = result[i];
+      if(srv.appId === applicationId) {
+          console.log(srv.displayName + " " + srv.appId + " <-- Found");
+      } else {
+        console.log(srv.displayName + " " + srv.appId);
+      }
+  }
   return result.find(x=> x.appId === applicationId);
 }
 
