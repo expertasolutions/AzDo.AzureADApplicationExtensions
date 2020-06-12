@@ -238,13 +238,12 @@ async function run() {
                 console.log("   Permission: " + permission.id);
             }
 
-            /*
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
-                await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
+                console.log("   requiredResourceAccess: " + rqAccess.resourceAppId);
+                //await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
-            */
         }
 
         // Add Owner to new Azure AD Application
