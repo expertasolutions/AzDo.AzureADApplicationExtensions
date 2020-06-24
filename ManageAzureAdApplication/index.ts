@@ -197,6 +197,7 @@ async function grantAuth2Permissions (
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
 
     try {
+        /*
         var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).filter(x => x.clientId === servicePrincipalId);
         console.log("-----");
         console.log(JSON.stringify(ls));
@@ -205,6 +206,7 @@ async function grantAuth2Permissions (
             let prm = ls[i];
             await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
         }
+        */
         await graphClient.oAuth2PermissionGrant.create(permissions);
         console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
     } catch {
@@ -265,10 +267,19 @@ async function run() {
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
 
+            var currentGrants = (await graphClient.oAuth2PermissionGrant.list()).filter(x=> x.clientId === service.objectId);
+            console.log("-----");
+            console.log(JSON.stringify(currentGrants));
+            console.log("-----")
+            for(let i=0;i<currentGrants.length;i++) {
+                let prm = currentGrants[i];
+                await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+            }
+
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
                 var newPerm = newPermissions[i];
-                await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
+                //await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
             }
         }
 
