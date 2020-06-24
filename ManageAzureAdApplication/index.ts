@@ -258,14 +258,14 @@ async function run() {
 
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
-                var rqAccess = newPermissions[i];
+                var newPerm = newPermissions[i];
                 console.log("   resourceAppId: " + rqAccess.resourceAppId + " Exists");
-                if(applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === rqAccess.resourceAppId)) {
-                    let newPerm = applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === rqAccess.resourceAppId);
+                if(applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId)) {
+                    let currentPerm = applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId);
                     
-                    for(var p=0;p<rqAccess.resourceAccess.length;p++) {
-                        let rs = rqAccess.resourceAccess[p];
-                        if(newPerm.resourceAccess.find(u=> u.id === rs.id)) {
+                    for(var p=0;p<newPerm.resourceAccess.length;p++) {
+                        let rs = newPerm.resourceAccess[p];
+                        if(currentPerm.resourceAccess.find(u=> u.id === rs.id)) {
                             console.log("           " + rs.id + " " + rs.type + " Exists");
                         } else {
                             console.log("           " + rs.id + " " + rs.type + " Not Exists");
@@ -277,7 +277,7 @@ async function run() {
                 }
 
                 //console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
-                //await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
+                await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
         }
 
