@@ -1,7 +1,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
-import { RequiredResourceAccess, ServicePrincipal } from '@azure/graph/src/models';
+import { RequiredResourceAccess, ServicePrincipal, OAuth2PermissionGrantListOptionalParams } from '@azure/graph/src/models';
 import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
 import { async } from 'q';
 
@@ -145,6 +145,15 @@ async function deleteAuth2Permissions (
 ,   graphClient:azureGraph.GraphRbacManagementClient
 ) {
     console.log("Delete Auth2Permissions ... of : " + objectId);
+    let options: OAuth2PermissionGrantListOptionalParams = {
+        filters: objectId
+    };
+
+    let result = graphClient.oAuth2PermissionGrant.list(options);
+
+    console.log("------");
+    console.log(JSON.stringify(result));
+    console.log("------");
     return await graphClient.oAuth2PermissionGrant.deleteMethod(objectId)
 }
 
