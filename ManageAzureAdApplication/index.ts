@@ -254,7 +254,7 @@ async function run() {
             console.log(newPermissions);
             console.log("-----");
 
-            await deleteAuth2Permissions(service.objectId, graphClient);
+            //await deleteAuth2Permissions(service.objectId, graphClient);
 
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
@@ -262,7 +262,7 @@ async function run() {
                 console.log("   resourceAppId: " + rqAccess.resourceAppId + " Exists");
                 if(newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId)) {
                     let newPerm = newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId);
-                    /*
+                    
                     for(var p=0;p<rqAccess.resourceAccess.length;p++) {
                         let rs = rqAccess.resourceAccess[p];
                         if(newPerm.resourceAccess.find(u=> u.id === rs.id)) {
@@ -271,7 +271,7 @@ async function run() {
                             console.log("           " + rs.id + " " + rs.type + " Not Exists");
                         }
                     }
-                    */
+                    
                 } else {
                 //    console.log("       Not Exists");
                 }
