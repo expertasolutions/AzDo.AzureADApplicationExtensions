@@ -4,6 +4,7 @@ import azureGraph = require('@azure/graph');
 import { RequiredResourceAccess, ServicePrincipal, OAuth2PermissionGrantListOptionalParams } from '@azure/graph/src/models';
 import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
 import { async, race } from 'q';
+import { RequestPrepareOptions } from '@azure/ms-rest-js';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -257,18 +258,25 @@ async function run() {
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
 
+            
+            //https://graph.microsoft.com/v1.0/oauth2PermissionGrants/{id}
+            
             var currentGrants = (await graphClient.oAuth2PermissionGrant.list()).filter(x=> x.clientId === service.objectId);
             console.log("-----");
             console.log(JSON.stringify(currentGrants));
             console.log("-----")
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
+
+                let requestUrl: RequestPrepareOptions = {
+                    url: "https://graph.microsoft.com/v1.0/oauth2PermissionGrants/" + prm.objectId,
+                    method: "DELETE"
+                };
+
                 console.log("Delete: " + prm.objectId);
-                try {
-                    await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
-                } catch {
-                    console.log("error");
-                }
+                let requestResult = await graphClient.sendRequest(requestUrl);
+                console.log(JSON.stringify(requestResult));
+                //await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
 
             // Set Application Permissions
