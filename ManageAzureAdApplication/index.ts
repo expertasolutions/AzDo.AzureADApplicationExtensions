@@ -257,11 +257,11 @@ async function run() {
             //await deleteAuth2Permissions(service.objectId, graphClient);
 
             // Set Application Permissions
-            for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
-                var rqAccess = applicationInstance.requiredResourceAccess[i];
+            for(var i=0;i<newPermissions.length;i++){
+                var rqAccess = newPermissions[i];
                 console.log("   resourceAppId: " + rqAccess.resourceAppId + " Exists");
-                if(newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId)) {
-                    let newPerm = newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId);
+                if(applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === rqAccess.resourceAppId)) {
+                    let newPerm = applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === rqAccess.resourceAppId);
                     
                     for(var p=0;p<rqAccess.resourceAccess.length;p++) {
                         let rs = rqAccess.resourceAccess[p];
