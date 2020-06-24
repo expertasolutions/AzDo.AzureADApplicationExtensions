@@ -201,7 +201,10 @@ async function grantAuth2Permissions (
         console.log("-----");
         console.log(JSON.stringify(ls));
         console.log("-----")
-
+        for(let i=0;i<ls.length;i++) {
+            let prm = ls[i];
+            await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+        }
         await graphClient.oAuth2PermissionGrant.create(permissions);
         console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
     } catch {
