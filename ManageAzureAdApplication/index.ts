@@ -1,6 +1,7 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
+import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -37,7 +38,9 @@ async function FindServicePrincipal (
   if(searchResults.length === 0){
     return undefined;
   } else {
-    return searchResults[0];
+    let srvPrincipal = searchResults[0];
+    srvPrincipal = await graphClient.servicePrincipals.get(srvPrincipal.objectId);
+    return srvPrincipal;
   }
 }
 
