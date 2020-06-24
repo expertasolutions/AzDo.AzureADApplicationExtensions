@@ -3,7 +3,7 @@ import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
 import { RequiredResourceAccess, ServicePrincipal, OAuth2PermissionGrantListOptionalParams } from '@azure/graph/src/models';
 import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
-import { async } from 'q';
+import { async, race } from 'q';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -194,8 +194,12 @@ async function grantAuth2Permissions (
                 expiryTime: nextYear.toISOString()
             }
         } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
-        
-        await graphClient.oAuth2PermissionGrant.create(permissions);
+        try {
+            await graphClient.oAuth2PermissionGrant.create(permissions);
+            console.log("Permissions granted for " + rAccess.id);
+        } catch {
+            console.log("Permissions already granted for " + rAccess.id);
+        }
     }
 }
 
