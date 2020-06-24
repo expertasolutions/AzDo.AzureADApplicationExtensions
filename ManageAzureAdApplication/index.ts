@@ -197,7 +197,7 @@ async function grantAuth2Permissions (
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
 
     try {
-        var ls = await graphClient.oAuth2PermissionGrant.list(permissions);
+        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).find(x => x.clientId === srv.objectId);
         console.log("-----");
         console.log(JSON.stringify(ls));
         console.log("-----")
@@ -205,7 +205,6 @@ async function grantAuth2Permissions (
         await graphClient.oAuth2PermissionGrant.create(permissions);
         console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
     } catch {
-        
         console.log("   Permissions already granted for '" + rqAccess.resourceAppId + "'");
     }
 }
