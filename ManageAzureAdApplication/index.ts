@@ -1,7 +1,9 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
+import { RequiredResourceAccess, ServicePrincipal } from '@azure/graph/src/models';
 import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
+import { async } from 'q';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -138,6 +140,14 @@ async function CreateOrUpdateADApplication(
     }
 }
 
+async function deleteAuth2Permissions (
+    servicePrincipal: ServicePrincipal
+,   graphClient:azureGraph.GraphRbacManagementClient
+) {
+    console.log("Delete Auth2Permissions ...");
+    return await graphClient.oAuth2PermissionGrant.deleteMethod(servicePrincipal.objectId)
+}
+
 async function grantAuth2Permissions (
         rqAccess: any
     ,   servicePrincipalId:string
@@ -228,14 +238,37 @@ async function run() {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
 
+            await deleteAuth2Permissions(service, graphClient);
+            /*
             console.log("Current Application Permissions");
+            let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
+            console.log("-----");
+            console.log(newPermissions);
+            console.log("-----");
 
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
-                console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
+                console.log("   resourceAppId: " + rqAccess.resourceAppId);
+                if(newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId)) {
+                    let newPerm = newPermissions.find(x=> x.resourceAppId === rqAccess.resourceAppId);
+                    console.log("       Exists");
+                    for(var p=0;p<rqAccess.resourceAccess.length;p++) {
+                        let rs = rqAccess.resourceAccess[p];
+                        if(newPerm.resourceAccess.find(u=> u.id === rs.id)) {
+                            console.log("           " + rs.id + " " + rs.type + " Exists");
+                        } else {
+                            console.log("           " + rs.id + " " + rs.type + " Not Exists");
+                        }
+                    }
+                } else {
+                    console.log("       Not Exists");
+                }
+
+                //console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
                 //await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
+            */
         }
 
         // Add Owner to new Azure AD Application
