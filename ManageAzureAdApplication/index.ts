@@ -230,15 +230,10 @@ async function run() {
 
             console.log("Current Application Permissions");
 
-            for(let p=0;p<service.oauth2Permissions.length;p++) {
-                let permission = service[p];
-                console.log("   Permission: " + JSON.stringify(permission));
-            }
-
             // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
-                console.log("   requiredResourceAccess: " + JSON.stringify(rqAccess.resourceAccess));
+                console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
                 //await grantAuth2Permissions(rqAccess, service.objectId as string, graphClient);
             }
         }
