@@ -197,7 +197,7 @@ async function grantAuth2Permissions (
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
 
     try {
-        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).filter(x => x.clientId === srv.objectId);
+        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).filter(x => x.clientId === servicePrincipalId);
         console.log("-----");
         console.log(JSON.stringify(ls));
         console.log("-----")
@@ -268,23 +268,6 @@ async function run() {
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
                 var newPerm = newPermissions[i];
-                //console.log("   resourceAppId: " + newPerm.resourceAppId + " Exists");
-                if(applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId)) {
-                    let currentPerm = applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId);
-                    
-                    for(var p=0;p<newPerm.resourceAccess.length;p++) {
-                        let rs = newPerm.resourceAccess[p];
-                        if(currentPerm.resourceAccess.find(u=> u.id === rs.id)) {
-                            //console.log("           " + rs.id + " " + rs.type + " Exists");
-                        } else {
-                            //console.log("           " + rs.id + " " + rs.type + " Not Exists");
-                        }
-                    }
-                    
-                } else {
-                    //console.log("       " + newPerm.resourceAppId + " Not Exists");
-                }
-
                 await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
             }
         }
