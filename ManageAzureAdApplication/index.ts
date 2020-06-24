@@ -173,7 +173,7 @@ async function grantAuth2Permissions (
 
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
         desiredScope = "";
-
+        
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
             var p = srv.oauth2Permissions.find(p=> {
@@ -181,10 +181,10 @@ async function grantAuth2Permissions (
             }) as azureGraph.GraphRbacManagementModels.OAuth2Permission;
             desiredScope += p.value + " ";
         }
-    
+
         var now = new Date();
         const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
-    
+
         var permissions = {
             body: {
                 clientId: servicePrincipalId,
@@ -194,6 +194,7 @@ async function grantAuth2Permissions (
                 expiryTime: nextYear.toISOString()
             }
         } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
+
         try {
             await graphClient.oAuth2PermissionGrant.create(permissions);
             console.log("Permissions granted for " + rAccess.id);
@@ -201,6 +202,7 @@ async function grantAuth2Permissions (
             console.log("Permissions already granted for " + rAccess.id);
         }
     }
+
 }
 
 async function run() {
@@ -250,41 +252,34 @@ async function run() {
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
                 await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId as string, graphClient);
             }
-        } 
+        }
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
 
-            //await deleteAuth2Permissions(service, graphClient);
             console.log("Current Application Permissions");
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
-            console.log("-----");
-            console.log(newPermissions);
-            console.log("-----");
-
-            //await deleteAuth2Permissions(service.objectId, graphClient);
 
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
                 var newPerm = newPermissions[i];
-                console.log("   resourceAppId: " + newPerm.resourceAppId + " Exists");
+                //console.log("   resourceAppId: " + newPerm.resourceAppId + " Exists");
                 if(applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId)) {
                     let currentPerm = applicationInstance.requiredResourceAccess.find(x=> x.resourceAppId === newPerm.resourceAppId);
                     
                     for(var p=0;p<newPerm.resourceAccess.length;p++) {
                         let rs = newPerm.resourceAccess[p];
                         if(currentPerm.resourceAccess.find(u=> u.id === rs.id)) {
-                            console.log("           " + rs.id + " " + rs.type + " Exists");
+                            //console.log("           " + rs.id + " " + rs.type + " Exists");
                         } else {
-                            console.log("           " + rs.id + " " + rs.type + " Not Exists");
+                            //console.log("           " + rs.id + " " + rs.type + " Not Exists");
                         }
                     }
                     
                 } else {
-                    console.log("       " + newPerm.resourceAppId + " Not Exists");
+                    //console.log("       " + newPerm.resourceAppId + " Not Exists");
                 }
 
-                //console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
                 await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
             }
         }
