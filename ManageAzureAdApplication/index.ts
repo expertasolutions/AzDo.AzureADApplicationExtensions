@@ -167,10 +167,13 @@ async function grantAuth2Permissions (
         filter: "appId eq '" + rqAccess.resourceAppId + "'"
     };
     
-    var rs = await graphClient.servicePrincipals.list(resourceAppFilter);
-    var srv = rs[0];
-    var desiredScope = "";
+    let rs = await graphClient.servicePrincipals.list(resourceAppFilter);
+    let srv = rs[0];
+    let desiredScope = "";
+
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
+        desiredScope = "";
+
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
             var p = srv.oauth2Permissions.find(p=> {
@@ -178,21 +181,22 @@ async function grantAuth2Permissions (
             }) as azureGraph.GraphRbacManagementModels.OAuth2Permission;
             desiredScope += p.value + " ";
         }
-    }
-
-    var now = new Date();
-    const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
     
-    var permissions = {
-        body: {
-            clientId: servicePrincipalId,
-            consentType: 'AllPrincipals',
-            scope: desiredScope,
-            resourceId: srv.objectId,
-            expiryTime: nextYear.toISOString()
-        }
-    } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
-    return await graphClient.oAuth2PermissionGrant.create(permissions)
+        var now = new Date();
+        const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
+    
+        var permissions = {
+            body: {
+                clientId: servicePrincipalId,
+                consentType: 'AllPrincipals',
+                scope: desiredScope,
+                resourceId: srv.objectId,
+                expiryTime: nextYear.toISOString()
+            }
+        } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
+        
+        await graphClient.oAuth2PermissionGrant.create(permissions);
+    }
 }
 
 async function run() {
