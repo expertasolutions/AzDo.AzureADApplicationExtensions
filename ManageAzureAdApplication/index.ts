@@ -197,7 +197,7 @@ async function grantAuth2Permissions (
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
 
     try {
-        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).find(x => x.clientId === srv.objectId);
+        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).filter(x => x.clientId === srv.objectId);
         console.log("-----");
         console.log(JSON.stringify(ls));
         console.log("-----")
