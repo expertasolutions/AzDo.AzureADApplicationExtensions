@@ -170,10 +170,9 @@ async function grantAuth2Permissions (
     
     let rs = await graphClient.servicePrincipals.list(resourceAppFilter);
     let srv = rs[0];
-    let desiredScope = "";
 
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
-        desiredScope = "";
+        let desiredScope = "";
 
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
