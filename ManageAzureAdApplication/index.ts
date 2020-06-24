@@ -273,7 +273,7 @@ async function run() {
                     }
                     
                 } else {
-                //    console.log("       Not Exists");
+                    console.log("       " + rqAccess.resourceAppId + " Not Exists");
                 }
 
                 //console.log("   requiredResourceAccess: " + rqAccess.resourceAppId + " -> " + JSON.stringify(rqAccess.resourceAccess));
