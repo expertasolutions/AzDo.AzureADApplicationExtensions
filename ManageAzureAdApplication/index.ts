@@ -69,6 +69,7 @@ async function AddADApplicationOwner(
     ,   tenantId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient) 
 {
+    console.log("Add Application Owner ... ");
     let urlGraph = 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId;
     var ownerParm = {
         url: urlGraph
@@ -162,7 +163,7 @@ async function grantAuth2Permissions (
     ,   servicePrincipalId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient
 ) {
-    console.log("Grant Auth2Permissions ...");
+    console.log("Grant Auth2Permissions '" + rqAccess.resourceAppId + "' ...");
     var resourceAppFilter = {
         filter: "appId eq '" + rqAccess.resourceAppId + "'"
     };
@@ -173,7 +174,7 @@ async function grantAuth2Permissions (
 
     for(var i=0;i<rqAccess.resourceAccess.length;i++){
         desiredScope = "";
-        
+
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
             var p = srv.oauth2Permissions.find(p=> {
@@ -197,9 +198,9 @@ async function grantAuth2Permissions (
 
         try {
             await graphClient.oAuth2PermissionGrant.create(permissions);
-            console.log("Permissions granted for " + rAccess.id);
+            console.log("   Permissions granted for '" + rAccess.id + "'");
         } catch {
-            console.log("Permissions already granted for " + rAccess.id);
+            console.log("   Permissions already granted for '" + rAccess.id + "'");
         }
     }
 
