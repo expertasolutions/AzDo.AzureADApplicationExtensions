@@ -197,16 +197,6 @@ async function grantAuth2Permissions (
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
 
     try {
-        /*
-        var ls = await (await graphClient.oAuth2PermissionGrant.list(permissions)).filter(x => x.clientId === servicePrincipalId);
-        console.log("-----");
-        console.log(JSON.stringify(ls));
-        console.log("-----")
-        for(let i=0;i<ls.length;i++) {
-            let prm = ls[i];
-            await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
-        }
-        */
         await graphClient.oAuth2PermissionGrant.create(permissions);
         console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
     } catch {
@@ -273,8 +263,8 @@ async function run() {
             console.log("-----")
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
-                await graphClient.oAuth2PermissionGrant.deleteMethod(service.objectId);
-                //await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+                console.log("Delete: " + prm.objectId);
+                await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
 
             // Set Application Permissions
