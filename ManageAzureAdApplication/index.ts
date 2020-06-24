@@ -264,7 +264,11 @@ async function run() {
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
                 console.log("Delete: " + prm.objectId);
-                await graphClient.oAuth2PermissionGrant.deleteMethod(service.objectId);
+                try {
+                    await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+                } catch {
+                    console.log("error");
+                }
             }
 
             // Set Application Permissions
