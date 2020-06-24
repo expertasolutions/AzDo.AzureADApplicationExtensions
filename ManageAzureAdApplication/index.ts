@@ -257,8 +257,6 @@ async function run() {
         else {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
-
-            console.log("Current Application Permissions");
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
 
             // Set Application Permissions
