@@ -172,8 +172,8 @@ async function grantAuth2Permissions (
     let rs = await graphClient.servicePrincipals.list(resourceAppFilter);
     let srv = rs[0];
 
+    let desiredScope = "";
     for(var i=0;i<rqAccess.resourceAccess.length;i++) {
-        let desiredScope = "";
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
             var p = srv.oauth2Permissions.find(p=> {
@@ -181,26 +181,26 @@ async function grantAuth2Permissions (
             }) as azureGraph.GraphRbacManagementModels.OAuth2Permission;
             desiredScope += p.value + " ";
         }
+    }
 
-        var now = new Date();
-        const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
-    
-        var permissions = {
-            body: {
-                clientId: servicePrincipalId,
-                consentType: 'AllPrincipals',
-                scope: desiredScope,
-                resourceId: srv.objectId,
-                expiryTime: nextYear.toISOString()
-            }
-        } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
-    
-        try {
-            await graphClient.oAuth2PermissionGrant.create(permissions);
-            console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
-        } catch {
-            console.log("   Permissions already granted for '" + rqAccess.resourceAppId + "'");
+    var now = new Date();
+    const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
+
+    var permissions = {
+        body: {
+            clientId: servicePrincipalId,
+            consentType: 'AllPrincipals',
+            scope: desiredScope,
+            resourceId: srv.objectId,
+            expiryTime: nextYear.toISOString()
         }
+    } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
+
+    try {
+        await graphClient.oAuth2PermissionGrant.create(permissions);
+        console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
+    } catch {
+        console.log("   Permissions already granted for '" + rqAccess.resourceAppId + "'");
     }
 }
 
