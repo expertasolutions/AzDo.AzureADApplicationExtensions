@@ -264,14 +264,14 @@ async function run() {
             console.log("-----")
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
-                console.log("Delete: " + prm.objectId);
-                await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+                //console.log("Delete: " + prm.objectId);
+                //await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
 
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
                 var newPerm = newPermissions[i];
-                //await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
+                await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
             }
         }
 
