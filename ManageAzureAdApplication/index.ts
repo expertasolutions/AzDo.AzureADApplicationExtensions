@@ -268,14 +268,7 @@ async function run() {
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
 
-                let requestUrl: RequestPrepareOptions = {
-                    url: "https://graph.microsoft.com/v1.0/oauth2PermissionGrants/" + prm.objectId,
-                    method: "DELETE"
-                };
-
                 console.log("Delete: " + prm.objectId);
-                let requestResult = await graphClient.sendRequest(requestUrl);
-                console.log(JSON.stringify(requestResult));
                 await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
 
