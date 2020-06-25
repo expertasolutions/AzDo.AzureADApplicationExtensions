@@ -257,9 +257,6 @@ async function run() {
             applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
-
-            
-            //https://graph.microsoft.com/v1.0/oauth2PermissionGrants/{id}
             
             var currentGrants = (await graphClient.oAuth2PermissionGrant.list()).filter(x=> x.clientId === service.objectId);
             console.log("-----");
@@ -267,7 +264,6 @@ async function run() {
             console.log("-----")
             for(let i=0;i<currentGrants.length;i++) {
                 let prm = currentGrants[i];
-
                 console.log("Delete: " + prm.objectId);
                 await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
