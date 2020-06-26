@@ -257,6 +257,7 @@ async function run() {
             let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
             let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
             
+            /*
             var currentGrants = (await graphClient.oAuth2PermissionGrant.list()).filter(x=> x.clientId === service.objectId);
             console.log("-----");
             console.log(JSON.stringify(currentGrants));
@@ -266,6 +267,7 @@ async function run() {
                 //console.log("Delete: " + prm.objectId);
                 //await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
             }
+            */
 
             // Set Application Permissions
             for(var i=0;i<newPermissions.length;i++){
