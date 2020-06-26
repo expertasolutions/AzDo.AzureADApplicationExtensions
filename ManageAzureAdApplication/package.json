@@ -11,10 +11,10 @@
   "author": "Solutions Experta Inc.",
   "license": "MIT",
   "dependencies": {
-    "@azure/graph": "^5.0.0",
+    "@azure/graph": "^5.0.1",
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "azure-pipelines-task-lib": "^2.9.3",
-    "typescript": "^3.7.2"
+    "typescript": "^3.9.5"
   },
   "devDependencies": {
     "@types/node": "^12.12.7",

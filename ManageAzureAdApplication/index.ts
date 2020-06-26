@@ -1,6 +1,10 @@
 import tl = require('azure-pipelines-task-lib/task');
 import msRestNodeAuth = require('@azure/ms-rest-nodeauth');
 import azureGraph = require('@azure/graph');
+import { RequiredResourceAccess, ServicePrincipal, OAuth2PermissionGrantListOptionalParams } from '@azure/graph/src/models';
+import { ServicePrincipalObjectResult } from '@azure/graph/esm/models/mappers';
+import { async, race } from 'q';
+import { RequestPrepareOptions } from '@azure/ms-rest-js';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -23,6 +27,26 @@ async function FindAzureAdApplication(applicationName:string, graphClient:azureG
     }
 }
 
+async function FindServicePrincipal (
+    applicationId:string
+  , graphClient:azureGraph.GraphRbacManagementClient
+) {
+  console.log("List Service Principal ...");
+  
+  var resourceAppFilter = {
+      filter: "appId eq '" + applicationId + "'"
+  };
+
+  let searchResults = await graphClient.servicePrincipals.list(resourceAppFilter);
+  if(searchResults.length === 0){
+    return undefined;
+  } else {
+    let srvPrincipal = searchResults[0];
+    srvPrincipal = await graphClient.servicePrincipals.get(srvPrincipal.objectId);
+    return srvPrincipal;
+  }
+}
+
 async function CreateServicePrincipal(
       applicationName:string
     , applicationId:string
@@ -34,6 +58,7 @@ async function CreateServicePrincipal(
         appId: applicationId
     };
     let result = await graphClient.servicePrincipals.create(serviceParms);
+    
     // Delay for the Azure AD Application and Service Principal...
     await delay(60000);
     return result;
@@ -45,11 +70,20 @@ async function AddADApplicationOwner(
     ,   tenantId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient) 
 {
+    console.log("Add Application Owner ... ");
+    let urlGraph = 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId;
     var ownerParm = {
-        url: 'https://graph.windows.net/' + tenantId + '/directoryObjects/' + ownerId
+        url: urlGraph
     };
-    console.log("   Adding owner to Azure ActiveDirectory Application ...");
-    return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
+
+    let owners = await graphClient.applications.listOwners(applicationObjectId);
+    if(owners.find(x=> x.objectId === ownerId)) {
+        console.log("   Owner already existing on the Azure ActiveDirectory Application");
+        return undefined;
+    } else {
+        console.log("   Adding owner to Azure ActiveDirectory Application ...");
+        return await graphClient.applications.addOwner(applicationObjectId, ownerParm);
+    }
 }
 
 async function CreateOrUpdateADApplication(
@@ -94,20 +128,35 @@ async function CreateOrUpdateADApplication(
     };
 
     if(appObjectId == null){
-        let createResult = await graphClient.applications.create(newAppParms);
+        await graphClient.applications.create(newAppParms);
 
         // Delay for the Azure AD Application and Service Principal...
         await delay(10000);
         return await FindAzureAdApplication(applicationName, graphClient);
     }
     else {
-        let updateResult = await graphClient.applications.patch(appObjectId, newAppParms);
-
+        await graphClient.applications.patch(appObjectId, newAppParms);
         // Delay for the Azure AD Application and Service Principal...
         await delay(10000);
-
         return await FindAzureAdApplication(applicationName, graphClient);
     }
+}
+
+async function deleteAuth2Permissions (
+    objectId: string
+,   graphClient:azureGraph.GraphRbacManagementClient
+) {
+    console.log("Delete Auth2Permissions ... of : " + objectId);
+    let options: OAuth2PermissionGrantListOptionalParams = {
+        filters: objectId
+    };
+
+    let result = graphClient.oAuth2PermissionGrant.list(options);
+
+    console.log("------");
+    console.log(JSON.stringify(result));
+    console.log("------");
+    return await graphClient.oAuth2PermissionGrant.deleteMethod(objectId)
 }
 
 async function grantAuth2Permissions (
@@ -115,15 +164,16 @@ async function grantAuth2Permissions (
     ,   servicePrincipalId:string
     ,   graphClient:azureGraph.GraphRbacManagementClient
 ) {
-    console.log("Grant Auth2Permissions ...");
+    console.log("Grant Auth2Permissions '" + rqAccess.resourceAppId + "' ...");
     var resourceAppFilter = {
         filter: "appId eq '" + rqAccess.resourceAppId + "'"
     };
     
-    var rs = await graphClient.servicePrincipals.list(resourceAppFilter);
-    var srv = rs[0];
-    var desiredScope = "";
-    for(var i=0;i<rqAccess.resourceAccess.length;i++){
+    let rs = await graphClient.servicePrincipals.list(resourceAppFilter);
+    let srv = rs[0];
+
+    let desiredScope = "";
+    for(var i=0;i<rqAccess.resourceAccess.length;i++) {
         var rAccess = rqAccess.resourceAccess[i];
         if(srv.oauth2Permissions != null) {
             var p = srv.oauth2Permissions.find(p=> {
@@ -135,7 +185,7 @@ async function grantAuth2Permissions (
 
     var now = new Date();
     const nextYear = new Date(now.getFullYear()+1, now.getMonth(), now.getDay());
-    
+
     var permissions = {
         body: {
             clientId: servicePrincipalId,
@@ -145,7 +195,13 @@ async function grantAuth2Permissions (
             expiryTime: nextYear.toISOString()
         }
     } as azureGraph.GraphRbacManagementModels.OAuth2PermissionGrantCreateOptionalParams;
-    return await graphClient.oAuth2PermissionGrant.create(permissions)
+
+    try {
+        await graphClient.oAuth2PermissionGrant.create(permissions);
+        console.log("   Permissions granted for '" + rqAccess.resourceAppId + "'");
+    } catch {
+        console.log("   Permissions already granted for '" + rqAccess.resourceAppId + "'");
+    }
 }
 
 async function run() {
@@ -183,37 +239,57 @@ async function run() {
         var graphClient = new azureGraph.GraphRbacManagementClient(pipeCreds, tenantId, { baseUri: 'https://graph.windows.net' });
 
         let applicationInstance = await FindAzureAdApplication(applicationName, graphClient);
-        if(applicationInstance === null){
+        if(applicationInstance === null) {
             // Create new Azure AD Application
             applicationInstance = await CreateOrUpdateADApplication(null, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
-
-            // Add Owner to new Azure AD Application
-            await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
 
             // Create Service Principal for Azure AD Application
             let newServicePrincipal = await CreateServicePrincipal(applicationName, applicationInstance.appId as string, graphClient);
 
-            // Set Application Permission
+            // Set Application Permissions
             for(var i=0;i<applicationInstance.requiredResourceAccess.length;i++){
                 var rqAccess = applicationInstance.requiredResourceAccess[i];
                 await grantAuth2Permissions(rqAccess, newServicePrincipal.objectId as string, graphClient);
             }
-
-            // Update Application IdentifierUrisapplicationInstance
-            var appUpdateParms = {
-                identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
-            };
-            await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
-        } 
-        else {
-            await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
         }
-        
+        else {
+            applicationInstance = await CreateOrUpdateADApplication(applicationInstance.objectId as string, applicationName, rootDomain, applicationSecret, homeUrl, taskReplyUrls, requiredResource, graphClient);
+            let service = await FindServicePrincipal(applicationInstance.appId, graphClient);
+            let newPermissions: RequiredResourceAccess[] = JSON.parse(requiredResource);
+            
+            /*
+            var currentGrants = (await graphClient.oAuth2PermissionGrant.list()).filter(x=> x.clientId === service.objectId);
+            console.log("-----");
+            console.log(JSON.stringify(currentGrants));
+            console.log("-----")
+            for(let i=0;i<currentGrants.length;i++) {
+                let prm = currentGrants[i];
+                //console.log("Delete: " + prm.objectId);
+                //await graphClient.oAuth2PermissionGrant.deleteMethod(prm.objectId);
+            }
+            */
+
+            // Set Application Permissions
+            for(var i=0;i<newPermissions.length;i++){
+                var newPerm = newPermissions[i];
+                await grantAuth2Permissions(newPerm, service.objectId as string, graphClient);
+            }
+        }
+
+        // Add Owner to new Azure AD Application
+        await AddADApplicationOwner(applicationInstance.objectId as string, ownerId, tenantId, graphClient);
+
+        // Update Application IdentifierUrisApplicationInstance
+        var appUpdateParms = {
+            identifierUris: ['https://' + rootDomain + '/' + applicationInstance.appId ]
+        };
+        await graphClient.applications.patch(applicationInstance.objectId, appUpdateParms);
+
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
         // Delay for the Azure AD Application and Service Principal...
-        await delay(10000);
-} catch (err) {
+        await delay(15000);
+    } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
 }
