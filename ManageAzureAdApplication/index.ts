@@ -288,7 +288,7 @@ async function run() {
         tl.setVariable("azureAdApplicationId", applicationInstance.appId as string);
 
         // Delay for the Azure AD Application and Service Principal...
-        await delay(10000);
+        await delay(15000);
     } catch (err) {
         tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed');
     }
